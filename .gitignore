@@ -1,0 +1,7 @@
+# Ignored Directories
+bin/
+intermediate/
+
+# Visual Studio
+.vs
+*.user

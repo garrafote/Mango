@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30709.132
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Sandbox\Sandbox.vcxproj", "{D96E5EAD-51EE-4AD6-A9EA-2062BD134865}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mango", "Mango\Mango.vcxproj", "{8D1EB9C0-D1B4-446C-A012-A2EFFA2B5B5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D1EB9C0-D1B4-446C-A012-A2EFFA2B5B5E}.Debug|x64.ActiveCfg = Debug|x64
+		{8D1EB9C0-D1B4-446C-A012-A2EFFA2B5B5E}.Debug|x64.Build.0 = Debug|x64
+		{8D1EB9C0-D1B4-446C-A012-A2EFFA2B5B5E}.Release|x64.ActiveCfg = Release|x64
+		{8D1EB9C0-D1B4-446C-A012-A2EFFA2B5B5E}.Release|x64.Build.0 = Release|x64
+		{D96E5EAD-51EE-4AD6-A9EA-2062BD134865}.Debug|x64.ActiveCfg = Debug|x64
+		{D96E5EAD-51EE-4AD6-A9EA-2062BD134865}.Debug|x64.Build.0 = Debug|x64
+		{D96E5EAD-51EE-4AD6-A9EA-2062BD134865}.Release|x64.ActiveCfg = Release|x64
+		{D96E5EAD-51EE-4AD6-A9EA-2062BD134865}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1B690AA-6A0F-485F-BFE6-D7D6D169CEE0}
+	EndGlobalSection
+EndGlobal

@@ -29,10 +29,10 @@ namespace Mango {
 #define MGO_CORE_ERROR(...)   ::Mango::Log::GetCoreLogger()->error(__VA_ARGS__)
 #define MGO_CORE_FATAL(...)   ::Mango::Log::GetCoreLogger()->fatal(__VA_ARGS__)
 
-// Core log macros
+// Client log macros
 
-#define MGO_TRACE(...)   ::Mango::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define MGO_INFO(...)    ::Mango::Log::GetClientLogger()->info(__VA_ARGS__)
-#define MGO_WARN(...)    ::Mango::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define MGO_ERROR(...)   ::Mango::Log::GetClientLogger()->error(__VA_ARGS__)
-#define MGO_FATAL(...)   ::Mango::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define MGO_TRACE(...)        ::Mango::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define MGO_INFO(...)         ::Mango::Log::GetClientLogger()->info(__VA_ARGS__)
+#define MGO_WARN(...)         ::Mango::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define MGO_ERROR(...)        ::Mango::Log::GetClientLogger()->error(__VA_ARGS__)
+#define MGO_FATAL(...)        ::Mango::Log::GetClientLogger()->fatal(__VA_ARGS__)

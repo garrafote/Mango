@@ -10,6 +10,12 @@ workspace "Mango"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to root folder (Solution directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Mango/vendor/GLFW/include"
+
+include "Mango/vendor/GLFW"
+
 project "Mango"
 	location "Mango"
 	kind "SharedLib"
@@ -30,7 +36,14 @@ project "Mango"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"

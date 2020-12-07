@@ -5,3 +5,8 @@ intermediate/
 # Visual Studio
 .vs
 *.user
+
+# Visual Studio auto generated files
+*.vcxproj
+*.vcxproj.filters
+*.sln

@@ -18,6 +18,9 @@ project "Mango"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("intermediate/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "MangoPCH.h"
+	pchsource "Mango/src/MangoPCH.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",

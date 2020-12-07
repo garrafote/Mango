@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Mango {
 
 	class MANGO_API MouseMovedEvent : public Event 

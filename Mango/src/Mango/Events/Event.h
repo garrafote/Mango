@@ -2,9 +2,6 @@
 
 #include "Mango/Core.h"
 
-#include <string>
-#include <functional>
-
 namespace Mango {
 
 	enum class EventType

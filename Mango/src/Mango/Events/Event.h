@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MangoPCH.h"
+
 #include "Mango/Core.h"
 
 namespace Mango {

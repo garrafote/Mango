@@ -5,6 +5,8 @@
 #include "Mango/Events/KeyEvent.h"
 #include "Mango/Events/MouseEvent.h"
 
+#include <glad/glad.h>
+
 namespace Mango {
 
 	static bool s_GLFWInitialized = false;
@@ -48,6 +50,8 @@ namespace Mango {
 
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		MGO_CORE_ASSERT(STATUS, "Failed to initialize Glad!")
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

@@ -64,14 +64,17 @@ project "Mango"
 
 	filter "configurations:Debug"
 		defines "MANGO_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "MANGO_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 	
 	filter "configurations:Dist"
 		defines "MANGO_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 project "Sandbox"
@@ -111,13 +114,16 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "MANGO_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "MANGO_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 	
 	filter "configurations:Dist"
 		defines "MANGO_DIST"
+		buildoptions "/MD"
 		optimize "On"
 

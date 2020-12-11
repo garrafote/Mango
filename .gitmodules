@@ -4,3 +4,6 @@
 [submodule "Mango/vendor/GLFW"]
 	path = Mango/vendor/GLFW
 	url = https://github.com/garrafote/glfw.git
+[submodule "Mango/vendor/imgui"]
+	path = Mango/vendor/imgui
+	url = https://github.com/garrafote/imgui.git

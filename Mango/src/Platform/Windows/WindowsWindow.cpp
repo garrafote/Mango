@@ -51,7 +51,7 @@ namespace Mango {
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		MGO_CORE_ASSERT(STATUS, "Failed to initialize Glad!")
+		MGO_CORE_ASSERT(status, "Failed to initialize Glad!")
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 

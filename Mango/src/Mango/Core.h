@@ -10,6 +10,10 @@
 	#error Mango only supports Windows!
 #endif
 
+#ifdef MANGO_DEBUG
+	#define MANGO_ENABLE_ASSERTS
+#endif
+
 #ifdef MANGO_ENABLE_ASSERTS
 	#define MGO_ASSERT(X, ...) { if (!(X)) { MGO_ERROR("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#define MGO_CORE_ASSERT(X, ...) { if (!(X)) { MGO_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }

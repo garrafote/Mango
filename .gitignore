@@ -10,3 +10,6 @@ intermediate/
 *.vcxproj
 *.vcxproj.filters
 *.sln
+
+# ImGui
+Sandbox/imgui.ini

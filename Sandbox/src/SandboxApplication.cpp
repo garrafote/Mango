@@ -8,7 +8,7 @@ public:
 
 	void OnUpdate() override
 	{
-		MGO_INFO("ExampleLayer::OnUpdate");
+		//MGO_INFO("ExampleLayer::OnUpdate");
 	}
 
 	void OnEvent(Mango::Event& event) override

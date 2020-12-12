@@ -74,7 +74,7 @@ namespace Mango {
 		MouseButtonPressedEvent(int button)
 			: MouseButtonEvent(button) { }
 
-		EVENT_CLASS_TYPE(MouseButtonReleased)
+		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
 	class MANGO_API MouseButtonReleasedEvent : public MouseButtonEvent 

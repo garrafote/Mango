@@ -54,4 +54,21 @@ namespace Mango {
 
 		EVENT_CLASS_TYPE(KeyReleased);
 	};
+	
+	class MANGO_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keyCode)
+			: KeyEvent(keyCode) { }
+		
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTyped: " << m_KeyCode;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyTyped);
+	};
+
 }

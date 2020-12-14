@@ -7,3 +7,6 @@
 [submodule "Mango/vendor/imgui"]
 	path = Mango/vendor/imgui
 	url = https://github.com/garrafote/imgui.git
+[submodule "Mango/vendor/glm"]
+	path = Mango/vendor/glm
+	url = https://github.com/g-truc/glm.git

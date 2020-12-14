@@ -15,7 +15,8 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Mango/vendor/GLFW/include"
 IncludeDir["Glad"] = "Mango/vendor/Glad/include"
-IncludeDir["imgui"] = "Mango/vendor/imgui"
+IncludeDir["ImGui"] = "Mango/vendor/imgui"
+IncludeDir["glm"] = "Mango/vendor/glm"
 
 group "Dependencies"
 	include "Mango/vendor/GLFW"
@@ -39,7 +40,9 @@ project "Mango"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	includedirs
@@ -48,14 +51,15 @@ project "Mango"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.imgui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links
 	{
 		"GLFW",
 		"Glad",
-		"imgui",
+		"ImGui",
 		"opengl32.lib"
 	}
 
@@ -108,7 +112,9 @@ project "Sandbox"
 	includedirs
 	{
 		"Mango/vendor/spdlog/include",
-		"Mango/src"
+		"Mango/src",
+		"%{IncludeDir.glm}"
+
 	}
 
 	links

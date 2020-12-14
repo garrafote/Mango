@@ -8,7 +8,8 @@ public:
 
 	void OnUpdate() override
 	{
-		//MGO_INFO("ExampleLayer::OnUpdate");
+		if (Mango::Input::IsKeyPressed(MGO_KEY_TAB))
+			MGO_TRACE("Tab key is pressed!");
 	}
 
 	void OnEvent(Mango::Event& event) override

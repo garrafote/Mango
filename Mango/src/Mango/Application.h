@@ -7,6 +7,8 @@
 #include "Mango/Events/Event.h"
 #include "Mango/Events/ApplicationEvent.h"
 
+#include "Mango/ImGui/ImGuiLayer.h"
+
 namespace Mango {
 
 	class MANGO_API Application
@@ -29,6 +31,7 @@ namespace Mango {
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 

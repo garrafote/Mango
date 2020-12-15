@@ -1,5 +1,7 @@
 #include <Mango.h>
 
+#include "imgui/imgui.h"
+
 class ExampleLayer : public Mango::Layer
 {
 public:
@@ -25,7 +27,6 @@ public:
 	Sandbox()
 	{
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Mango::ImGuiLayer());
 	}
 
 	~Sandbox()

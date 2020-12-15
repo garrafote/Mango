@@ -112,9 +112,9 @@ project "Sandbox"
 	includedirs
 	{
 		"Mango/vendor/spdlog/include",
+		"Mango/vendor",
 		"Mango/src",
 		"%{IncludeDir.glm}"
-
 	}
 
 	links

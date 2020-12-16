@@ -14,6 +14,13 @@ public:
 			MGO_TRACE("Tab key is pressed!");
 	}
 
+	void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello World!");
+		ImGui::End();
+	}
+
 	void OnEvent(Mango::Event& event) override
 	{
 		MGO_TRACE("{0}", event);

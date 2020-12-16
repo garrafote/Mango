@@ -23,7 +23,7 @@ public:
 
 	void OnEvent(Mango::Event& event) override
 	{
-		MGO_TRACE("{0}", event);
+		//MGO_TRACE("{0}", event);
 	}
 
 };

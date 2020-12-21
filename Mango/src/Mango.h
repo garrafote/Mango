@@ -10,6 +10,17 @@
 
 #include "Mango/ImGui/ImGuiLayer.h"
 
+// ------ Renderer  -----------
+#include "Mango/Renderer/Renderer.h"
+#include "Mango/Renderer/RenderCommand.h"
+
+#include "Mango/Renderer/Buffer.h"
+#include "Mango/Renderer/Shader.h"
+#include "Mango/Renderer/VertexArray.h"
+
+#include "Mango/Renderer/OrthographicCamera.h"
+//----------------------------
+
 // ------ Entry Point --------
 #include "Mango/EntryPoint.h"
 //----------------------------

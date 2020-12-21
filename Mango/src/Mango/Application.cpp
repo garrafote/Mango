@@ -1,19 +1,12 @@
 #include "MangoPCH.h"
 #include "Application.h"
 
-#include "Mango/Renderer/Renderer.h"
-#include "Mango/Input.h"
-
-#include "Mango/KeyCodes.h"
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace Mango {
 
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
-		: m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
-	{
+			{
 		MGO_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -22,119 +15,6 @@ namespace Mango {
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
-
-		m_VertexArray.reset(VertexArray::Create());
-
-		float vertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f,   0.8f, 0.2f, 0.8f, 1.0f,
-			 0.5f, -0.5f, 0.0f,   0.2f, 0.3f, 0.8f, 1.0f,
-			 0.0f,  0.5f, 0.0f,   0.8f, 0.8f, 0.2f, 1.0f,
-		};
-
-		std::shared_ptr<VertexBuffer> vertexBuffer;
-		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-		BufferLayout layout = {
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float4, "a_Color" },
-			//{ ShaderDataType::Float3, "a_Normal" },
-		};
-		vertexBuffer->SetLayout(layout);
-		m_VertexArray->AddVertexBuffer(vertexBuffer);
-
-		unsigned int indices[3]{ 0, 1, 2 };
-		std::shared_ptr<IndexBuffer> indexBuffer;
-		indexBuffer.reset(IndexBuffer::Create(indices, 3));
-		m_VertexArray->SetIndexBuffer(indexBuffer);
-
-		m_SquareVA.reset(VertexArray::Create());
-
-		float squareVertices[3 * 7] = {
-			-0.75f, -0.75f, 0.0f,
-			 0.75f, -0.75f, 0.0f,
-			 0.75f,  0.75f, 0.0f,
-			-0.75f,  0.75f, 0.0f,
-		};
-
-		std::shared_ptr<VertexBuffer> squareVB;
-		squareVB.reset(VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-		squareVB->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-		});
-		m_SquareVA->AddVertexBuffer(squareVB);
-
-		unsigned int squareIndices[6]{ 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<IndexBuffer> squareIB;
-		squareIB.reset(IndexBuffer::Create(squareIndices, 6));
-		m_SquareVA->SetIndexBuffer(squareIB);
-
-		std::string vertexSrc = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-
-			uniform mat4 u_ViewProjection;
-
-			out vec3 v_Position;
-			out vec4 v_Color;
-
-			void main()
-			{
-				v_Position = a_Position;
-				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string fragmentSrc = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec3 v_Position;
-			in vec4 v_Color;
-
-			void main()
-			{
-				color = vec4(v_Position * 0.5 + 0.5, 1.0);
-				color = v_Color;
-			}
-		)";
-
-		m_Shader.reset(Shader::Create(vertexSrc, fragmentSrc));
-
-		std::string blueShaderVertexSrc = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-
-			uniform mat4 u_ViewProjection;
-
-			out vec3 v_Position;
-
-			void main()
-			{
-				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string blueShaderFragmentSrc = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec3 v_Position;
-
-			void main()
-			{
-				color = vec4(0.2, 0.3, 0.8, 1.0);
-			}
-		)";
-
-		m_BlueShader.reset(Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
-
-
 	}
 
 	Application::~Application()
@@ -158,44 +38,6 @@ namespace Mango {
 		EventDispatcher	dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(MGO_BIND_EVENT_FN(Application::OnWindowClose));
 
-		dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& evt)
-		{
-			int keyCode = evt.GetKeyCode();
-			if (keyCode == MGO_KEY_A || keyCode == MGO_KEY_D || keyCode == MGO_KEY_W || keyCode == MGO_KEY_S)
-			{
-				glm::vec3 delta;
-				switch (keyCode)
-				{
-				case MGO_KEY_A:
-					delta = { 0.01f, 0.0f, 0.0f };
-					break;
-				case MGO_KEY_D:
-					delta = { -0.01f, 0.0f, 0.0f };
-					break;
-				case MGO_KEY_W:
-					delta = { 0.0f, 0.01f, 0.0f };
-					break;
-				case MGO_KEY_S:
-					delta = { 0.0f, -0.01f, 0.0f };
-					break;
-				}
-				glm::mat4 t = glm::mat4(1);
-				t = glm::translate(t, m_Camera.GetPosition());
-				t = glm::rotate(t, glm::radians(m_Camera.GetRotation()), glm::vec3(0, 0, 1));
-				t = glm::translate(t, delta);
-				m_Camera.SetPosition(t[3]);
-			}
-
-			if (keyCode == MGO_KEY_Q || keyCode == MGO_KEY_E)
-			{
-				float rotation = keyCode == MGO_KEY_Q ? 1.0f : -1.0f;
-
-				m_Camera.SetRotation(m_Camera.GetRotation() + rotation);
-			}
-
-			return true;
-		});
-
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);
@@ -208,16 +50,6 @@ namespace Mango {
 	{
 		while (m_Running)
 		{
-			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-			RenderCommand::Clear();
-
-			Renderer::BeginScene(m_Camera);
-			
-			Renderer::Submit(m_BlueShader, m_SquareVA);
-			Renderer::Submit(m_Shader, m_VertexArray);
-			
-			Renderer::EndScene();
-		
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 

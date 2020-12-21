@@ -9,14 +9,9 @@
 
 #include "Mango/ImGui/ImGuiLayer.h"
 
-#include "Mango/Renderer/Shader.h"
-#include "Mango/Renderer/Buffer.h"
-#include "Mango/Renderer/VertexArray.h"
-#include "Mango/Renderer/OrthographicCamera.h"
-
 namespace Mango {
 
-	class MANGO_API Application
+	class Application
 	{
 	public:
 		Application();
@@ -39,14 +34,6 @@ namespace Mango {
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_VertexArray;
-		
-		std::shared_ptr<Shader> m_BlueShader;
-		std::shared_ptr<VertexArray> m_SquareVA;
-
-		OrthographicCamera m_Camera;
 	private:
 		static Application* s_Instance;
 	};

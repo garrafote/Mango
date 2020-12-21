@@ -4,6 +4,9 @@
 #include "Mango/Renderer/Renderer.h"
 #include "Mango/Input.h"
 
+#include "Mango/KeyCodes.h"
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Mango {
 
 	Application* Application::s_Instance = nullptr;
@@ -155,6 +158,44 @@ namespace Mango {
 		EventDispatcher	dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(MGO_BIND_EVENT_FN(Application::OnWindowClose));
 
+		dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& evt)
+		{
+			int keyCode = evt.GetKeyCode();
+			if (keyCode == MGO_KEY_A || keyCode == MGO_KEY_D || keyCode == MGO_KEY_W || keyCode == MGO_KEY_S)
+			{
+				glm::vec3 delta;
+				switch (keyCode)
+				{
+				case MGO_KEY_A:
+					delta = { 0.01f, 0.0f, 0.0f };
+					break;
+				case MGO_KEY_D:
+					delta = { -0.01f, 0.0f, 0.0f };
+					break;
+				case MGO_KEY_W:
+					delta = { 0.0f, 0.01f, 0.0f };
+					break;
+				case MGO_KEY_S:
+					delta = { 0.0f, -0.01f, 0.0f };
+					break;
+				}
+				glm::mat4 t = glm::mat4(1);
+				t = glm::translate(t, m_Camera.GetPosition());
+				t = glm::rotate(t, glm::radians(m_Camera.GetRotation()), glm::vec3(0, 0, 1));
+				t = glm::translate(t, delta);
+				m_Camera.SetPosition(t[3]);
+			}
+
+			if (keyCode == MGO_KEY_Q || keyCode == MGO_KEY_E)
+			{
+				float rotation = keyCode == MGO_KEY_Q ? 1.0f : -1.0f;
+
+				m_Camera.SetRotation(m_Camera.GetRotation() + rotation);
+			}
+
+			return true;
+		});
+
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
 			(*--it)->OnEvent(e);
@@ -169,8 +210,6 @@ namespace Mango {
 		{
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			RenderCommand::Clear();
-
-			m_Camera.SetRotation(45.0f);
 
 			Renderer::BeginScene(m_Camera);
 			

@@ -12,6 +12,7 @@
 #include "Mango/Renderer/Shader.h"
 #include "Mango/Renderer/Buffer.h"
 #include "Mango/Renderer/VertexArray.h"
+#include "Mango/Renderer/OrthographicCamera.h"
 
 namespace Mango {
 
@@ -44,6 +45,8 @@ namespace Mango {
 		
 		std::shared_ptr<Shader> m_BlueShader;
 		std::shared_ptr<VertexArray> m_SquareVA;
+
+		OrthographicCamera m_Camera;
 	private:
 		static Application* s_Instance;
 	};

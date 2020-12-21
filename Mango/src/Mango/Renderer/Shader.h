@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace Mango {
 
@@ -14,6 +15,7 @@ namespace Mango {
 
 		static Shader* Create(const std::string& vertexSrc, const std::string& fragmentSrc);
 
+		virtual void UploadUniform(const std::string& name, const glm::mat4& matrix) = 0;
 	private:
 		uint32_t m_RendererID;
 	};

@@ -35,10 +35,10 @@ public:
 		m_SquareVA.reset(Mango::VertexArray::Create());
 
 		float squareVertices[3 * 7] = {
-			-0.75f, -0.75f, 0.0f,
-			 0.75f, -0.75f, 0.0f,
-			 0.75f,  0.75f, 0.0f,
-			-0.75f,  0.75f, 0.0f,
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.5f,  0.5f, 0.0f,
+			-0.5f,  0.5f, 0.0f,
 		};
 
 		std::shared_ptr<Mango::VertexBuffer> squareVB;
@@ -60,6 +60,7 @@ public:
 			layout(location = 1) in vec4 a_Color;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Model;
 
 			out vec3 v_Position;
 			out vec4 v_Color;
@@ -68,7 +69,7 @@ public:
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -95,13 +96,14 @@ public:
 			layout(location = 0) in vec3 a_Position;
 
 			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Model;
 
 			out vec3 v_Position;
 
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -126,14 +128,52 @@ public:
 	void OnUpdate(Mango::Timestep ts) override
 	{
 		MGO_TRACE("Delta time: {0}s ({1}ms): ", ts.GetSeconds(), ts.GetMilliseconds());
-		UpdateCamera(ts);
+
+		// Update Camera
+		{
+			if (Mango::Input::IsKeyPressed(MGO_KEY_Q))
+				m_CameraRotation += m_CameraRotationSpeed * ts;
+
+			if (Mango::Input::IsKeyPressed(MGO_KEY_E))
+				m_CameraRotation -= m_CameraRotationSpeed * ts;
+
+			glm::vec3 delta(0);
+			if (Mango::Input::IsKeyPressed(MGO_KEY_A) || Mango::Input::IsKeyPressed(MGO_KEY_LEFT))
+				delta.x -= m_CameraMoveSpeed;
+
+			if (Mango::Input::IsKeyPressed(MGO_KEY_D) || Mango::Input::IsKeyPressed(MGO_KEY_RIGHT))
+				delta.x += m_CameraMoveSpeed;
+
+			if (Mango::Input::IsKeyPressed(MGO_KEY_W) || Mango::Input::IsKeyPressed(MGO_KEY_UP))
+				delta.y += m_CameraMoveSpeed;
+
+			if (Mango::Input::IsKeyPressed(MGO_KEY_S) || Mango::Input::IsKeyPressed(MGO_KEY_DOWN))
+				delta.y -= m_CameraMoveSpeed;
+
+			glm::quat rotation = glm::angleAxis(glm::radians(m_CameraRotation), glm::vec3(0, 0, 1));
+			m_CameraPosition += rotation * delta * ts;
+
+			m_Camera.SetPosition(m_CameraPosition);
+			m_Camera.SetRotation(m_CameraRotation);
+		}
 
 		Mango::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		Mango::RenderCommand::Clear();
 
 		Mango::Renderer::BeginScene(m_Camera);
 
-		Mango::Renderer::Submit(m_BlueShader, m_SquareVA);
+		glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.1f));
+
+		for (int x = 0; x < 20; x++)
+		{
+			for (int y = 0; y < 20; y++)
+			{
+				glm::vec3 pos(x * 1.1f, y * 1.1f, 0.0f);
+				glm::mat4 transform = glm::translate(scale, pos);
+				Mango::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+			}
+		}
+
 		Mango::Renderer::Submit(m_Shader, m_VertexArray);
 
 		Mango::Renderer::EndScene();
@@ -146,49 +186,6 @@ public:
 	void OnEvent(Mango::Event& event) override
 	{
 		Mango::EventDispatcher dispatcher(event);
-	}
-
-	bool UpdateCamera(Mango::Timestep ts)
-	{
-
-		if (Mango::Input::IsKeyPressed(MGO_KEY_Q))
-		{
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		}
-		
-		if (Mango::Input::IsKeyPressed(MGO_KEY_E))
-		{
-			m_CameraRotation -= m_CameraRotationSpeed * ts;
-		}
-
-		glm::vec3 delta(0);
-		if (Mango::Input::IsKeyPressed(MGO_KEY_A) || Mango::Input::IsKeyPressed(MGO_KEY_LEFT))
-		{
-			delta.x -= m_CameraMoveSpeed;
-		}
-
-		if (Mango::Input::IsKeyPressed(MGO_KEY_D) || Mango::Input::IsKeyPressed(MGO_KEY_RIGHT))
-		{
-			delta.x += m_CameraMoveSpeed;
-		}
-
-		if (Mango::Input::IsKeyPressed(MGO_KEY_W) || Mango::Input::IsKeyPressed(MGO_KEY_UP))
-		{
-			delta.y += m_CameraMoveSpeed;
-		}
-
-		if (Mango::Input::IsKeyPressed(MGO_KEY_S) || Mango::Input::IsKeyPressed(MGO_KEY_DOWN))
-		{
-			delta.y -= m_CameraMoveSpeed;
-		}
-		
-		glm::quat rotation = glm::angleAxis(glm::radians(m_CameraRotation), glm::vec3(0, 0, 1));
-		m_CameraPosition += rotation * delta * ts;
-
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-		
-		return false;
 	}
 
 private:

@@ -4,6 +4,8 @@
 #include "Mango/Layer.h"
 #include "Mango/Log.h"
 
+#include "Mango/Core/Timestep.h"
+
 #include "Mango/Input.h"
 #include "Mango/KeyCodes.h"
 #include "Mango/MouseButtonCodes.h"

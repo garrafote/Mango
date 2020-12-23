@@ -123,9 +123,10 @@ public:
 
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Mango::Timestep ts) override
 	{
-		UpdateCamera();
+		MGO_TRACE("Delta time: {0}s ({1}ms): ", ts.GetSeconds(), ts.GetMilliseconds());
+		UpdateCamera(ts);
 
 		Mango::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		Mango::RenderCommand::Clear();
@@ -147,17 +148,17 @@ public:
 		Mango::EventDispatcher dispatcher(event);
 	}
 
-	bool UpdateCamera()
+	bool UpdateCamera(Mango::Timestep ts)
 	{
 
 		if (Mango::Input::IsKeyPressed(MGO_KEY_Q))
 		{
-			m_CameraRotation += m_CameraRotationSpeed;
+			m_CameraRotation += m_CameraRotationSpeed * ts;
 		}
 		
 		if (Mango::Input::IsKeyPressed(MGO_KEY_E))
 		{
-			m_CameraRotation -= m_CameraRotationSpeed;
+			m_CameraRotation -= m_CameraRotationSpeed * ts;
 		}
 
 		glm::vec3 delta(0);
@@ -182,7 +183,7 @@ public:
 		}
 		
 		glm::quat rotation = glm::angleAxis(glm::radians(m_CameraRotation), glm::vec3(0, 0, 1));
-		m_CameraPosition += rotation * delta;
+		m_CameraPosition += rotation * delta * ts;
 
 		m_Camera.SetPosition(m_CameraPosition);
 		m_Camera.SetRotation(m_CameraRotation);
@@ -200,10 +201,10 @@ private:
 	Mango::OrthographicCamera m_Camera;
 
 	glm::vec3 m_CameraPosition = glm::vec3(0);
-	float m_CameraMoveSpeed = 0.05f;
+	float m_CameraMoveSpeed = 5.0f;
 
 	float m_CameraRotation = 0;
-	float m_CameraRotationSpeed = 2.0f;
+	float m_CameraRotationSpeed = 180.0f;
 };
 
 class Sandbox : public Mango::Application

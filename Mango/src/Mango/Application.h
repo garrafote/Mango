@@ -7,6 +7,8 @@
 #include "Mango/Events/Event.h"
 #include "Mango/Events/ApplicationEvent.h"
 
+#include "Mango/Core/Timestep.h"
+
 #include "Mango/ImGui/ImGuiLayer.h"
 
 namespace Mango {
@@ -30,10 +32,13 @@ namespace Mango {
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
+	private:
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		float m_LastFrameTime = 0.0f;
+
 	private:
 		static Application* s_Instance;
 	};

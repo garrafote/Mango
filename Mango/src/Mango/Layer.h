@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Mango/Core.h"
+#include "Mango/Core/Timestep.h"
 #include "Mango/Events/Event.h"
 
 namespace Mango {
@@ -13,7 +14,7 @@ namespace Mango {
 
 		virtual void OnAttach() {}
 		virtual void OnDettach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep timestep) {}
 		virtual void OnImGuiRender() {}
 
 		virtual void OnEvent(Event& event) {}

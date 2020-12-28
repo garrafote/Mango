@@ -164,6 +164,7 @@ public:
 		)";
 
 		m_TextureShader = Mango::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc);
+		m_TextureShader = Mango::Shader::Create("assets/shaders/Texture.glsl");
 
 		m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_MangoLogoTexture = Mango::Texture2D::Create("assets/textures/Mango.png");

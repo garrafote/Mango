@@ -23,9 +23,26 @@ namespace Mango {
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
+
+		// Extract name from filepath
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filepath.rfind('.');
+		auto count = (lastDot == std::string::npos ? filepath.size() : lastDot) - lastSlash;
+
+		m_Name = filepath.substr(lastSlash, count);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
+		: m_Name(name)
+	{
+		std::string source = ReadFile(filepath);
+		auto shaderSources = PreProcess(source);
+		Compile(shaderSources);
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		: m_Name(name)
 	{
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
@@ -40,7 +57,7 @@ namespace Mango {
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
-		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 
 		std::string result;
 		if (in)
@@ -87,9 +104,13 @@ namespace Mango {
 
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		// Increase if needed
+		const int maxShaders = 2;
+		MGO_CORE_ASSERT(shaderSources.size() <= maxShaders, "Shader programs cannot have more than {0} shaders", maxShaders);
+		std::array<GLuint, maxShaders> glShaderIDs;
+		int glShaderIDIndex = 0;
+
 		GLuint program = glCreateProgram();
-		std::vector<GLuint> compiledShaderIDs;
-		compiledShaderIDs.reserve(shaderSources.size());
 
 		for (auto& [type, source] : shaderSources)
 		{
@@ -110,10 +131,15 @@ namespace Mango {
 				std::vector<GLchar> infoLog(maxLength);
 				glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
 
+				glDeleteProgram(program);
+
 				glDeleteShader(shader);
 
-				for (GLuint compiledShader : compiledShaderIDs)
+				for (int index = 0; index < glShaderIDIndex; index++)
+				{
+					GLuint compiledShader = glShaderIDs[index];
 					glDeleteShader(compiledShader);
+				}
 
 				MGO_CORE_ERROR("{0}", infoLog.data());
 				MGO_CORE_ASSERT(false, "Shader compilation failure!");
@@ -121,7 +147,7 @@ namespace Mango {
 			}
 
 			glAttachShader(program, shader);
-			compiledShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 
 		glLinkProgram(program);
@@ -137,19 +163,26 @@ namespace Mango {
 			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
 			glDeleteProgram(program);
-			
-			for (GLuint id : compiledShaderIDs)
-				glDeleteShader(id);
+
+			for (int index = 0; index < glShaderIDIndex; index++)
+			{
+				GLuint compiledShader = glShaderIDs[index];
+				glDeleteShader(compiledShader);
+			}
 
 			MGO_CORE_ERROR("{0}", infoLog.data());
 			MGO_CORE_ASSERT(false, "Shader link failure!");
 			return;
 		}
 
-		for (GLuint id : compiledShaderIDs)
+		for (int index = 0; index < glShaderIDIndex; index++)
+		{
+			GLuint id = glShaderIDs[index];
 			glDetachShader(program, id);
+		}
+		for (GLuint id : glShaderIDs)
 
-		m_RendererID = program;
+			m_RendererID = program;
 	}
 
 

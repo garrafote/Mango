@@ -94,7 +94,7 @@ public:
 			}
 		)";
 
-		m_Shader = Mango::Shader::Create(vertexSrc, fragmentSrc);
+		m_Shader = Mango::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 
 		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
@@ -128,49 +128,15 @@ public:
 			}
 		)";
 
-		m_FlatColorShader = Mango::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
+		m_FlatColorShader = Mango::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 
-		std::string textureShaderVertexSrc = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec2 a_TexCoord;
-
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Model;
-
-			out vec2 v_TexCoord;
-
-			void main()
-			{
-				v_TexCoord = a_TexCoord;
-				gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
-			}
-		)";
-
-		std::string textureShaderFragmentSrc = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-			in vec2 v_TexCoord;
-
-			uniform sampler2D u_Texture;
-
-			void main()
-			{
-				color = texture(u_Texture, v_TexCoord);
-			}
-		)";
-
-		m_TextureShader = Mango::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc);
-		m_TextureShader = Mango::Shader::Create("assets/shaders/Texture.glsl");
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_MangoLogoTexture = Mango::Texture2D::Create("assets/textures/Mango.png");
 	
-		m_TextureShader->Bind();
-		std::dynamic_pointer_cast<Mango::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		textureShader->Bind();
+		std::dynamic_pointer_cast<Mango::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Mango::Timestep ts) override
@@ -230,11 +196,13 @@ public:
 			}
 		}
 		
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 		m_Texture->Bind();
-		Mango::Renderer::Submit(m_TextureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
+		Mango::Renderer::Submit(textureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
 		
 		m_MangoLogoTexture->Bind();
-		Mango::Renderer::Submit(m_TextureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
+		Mango::Renderer::Submit(textureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
 
 		// Triangle
 		// Mango::Renderer::Submit(m_Shader, m_VertexArray);
@@ -255,10 +223,12 @@ public:
 	}
 
 private:
+	Mango::ShaderLibrary m_ShaderLibrary;
+
 	Mango::Ref<Mango::Shader> m_Shader;
 	Mango::Ref<Mango::VertexArray> m_VertexArray;
 
-	Mango::Ref<Mango::Shader> m_FlatColorShader, m_TextureShader;
+	Mango::Ref<Mango::Shader> m_FlatColorShader;
 	Mango::Ref<Mango::VertexArray> m_SquareVA;
 
 	Mango::Ref<Mango::Texture2D> m_Texture;

@@ -1,6 +1,8 @@
 #include "MangoPCH.h"
 #include "Renderer.h"
 
+#include "Platform/OpenGL/OpenGLShader.h"
+
 namespace Mango {
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
@@ -17,8 +19,8 @@ namespace Mango {
 	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->Bind();
-		shader->UploadUniform("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
-		shader->UploadUniform("u_Model", transform);
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Model", transform);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

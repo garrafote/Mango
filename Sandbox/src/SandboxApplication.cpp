@@ -1,7 +1,11 @@
 #include <Mango.h>
 
-#include <glm/gtx/quaternion.hpp>
+#include "Platform/OpenGL/OpenGLShader.h"
+
 #include "imgui/imgui.h"
+
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class ExampleLayer : public Mango::Layer
 {
@@ -114,11 +118,11 @@ public:
 
 			in vec3 v_Position;
 
-			uniform vec4 u_Color;
+			uniform vec3 u_Color;
 
 			void main()
 			{
-				color = u_Color;
+				color = vec4(u_Color, 1.0);
 			}
 		)";
 
@@ -171,17 +175,15 @@ public:
 		//primaryMaterial->Set("u_Color", m_PrimaryColor);
 		//Mango::MaterialInstanceRef secondaryMaterial = new Mango::MaterialInstance(material);
 		//secondaryMaterial->Set("u_Color", m_PrimaryColor);
-
+		m_FlatColorShader->Bind();
+		std::dynamic_pointer_cast<Mango::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+		
 		for (int x = 0; x < 20; x++)
 		{
 			for (int y = 0; y < 20; y++)
 			{
 				glm::vec3 pos(x * 1.1f, y * 1.1f, 0.0f);
 				glm::mat4 transform = glm::translate(scale, pos);
-				if ((x + y) % 2 == 0)
-					m_FlatColorShader->UploadUniform("u_Color", m_PrimaryColor);
-				else
-					m_FlatColorShader->UploadUniform("u_Color", m_SecondaryColor);
 				Mango::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
 		}
@@ -194,13 +196,7 @@ public:
 	void OnImGuiRender() override
 	{
 		ImGui::Begin("Properties");
-
-		ImGui::PushItemWidth(77);
-		ImGuiColorEditFlags colorPickerFlags = ImGuiColorEditFlags_NoInputs;
-		ImGui::ColorPicker4("Primary Color", &m_PrimaryColor.x, colorPickerFlags);
-		ImGui::ColorPicker4("Secondary Color", &m_SecondaryColor.x, colorPickerFlags);
-		ImGui::PopItemWidth();
-		
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 	}
 
@@ -225,8 +221,7 @@ private:
 	float m_CameraRotationSpeed = 180.0f;
 
 	// Properties
-	glm::vec4 m_PrimaryColor = { 0.8f, 0.2f, 0.3f, 1.0f };
-	glm::vec4 m_SecondaryColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+	glm::vec3 m_SquareColor = { 0.8f, 0.2f, 0.3f };
 };
 
 class Sandbox : public Mango::Application

@@ -13,7 +13,7 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
 	{
-		m_VertexArray.reset(Mango::VertexArray::Create());
+		m_VertexArray = Mango::VertexArray::Create();
 
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f,   0.8f, 0.2f, 0.8f, 1.0f,
@@ -21,8 +21,8 @@ public:
 			 0.0f,  0.5f, 0.0f,   0.8f, 0.8f, 0.2f, 1.0f,
 		};
 
-		std::shared_ptr<Mango::VertexBuffer> vertexBuffer;
-		vertexBuffer.reset(Mango::VertexBuffer::Create(vertices, sizeof(vertices)));
+		Mango::Ref<Mango::VertexBuffer> vertexBuffer;
+		vertexBuffer = Mango::VertexBuffer::Create(vertices, sizeof(vertices));
 		Mango::BufferLayout layout = {
 			{ Mango::ShaderDataType::Float3, "a_Position" },
 			{ Mango::ShaderDataType::Float4, "a_Color" },
@@ -32,29 +32,31 @@ public:
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		unsigned int indices[3]{ 0, 1, 2 };
-		std::shared_ptr<Mango::IndexBuffer> indexBuffer;
-		indexBuffer.reset(Mango::IndexBuffer::Create(indices, 3));
+		Mango::Ref<Mango::IndexBuffer> indexBuffer;
+		indexBuffer = Mango::IndexBuffer::Create(indices, 3);
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		m_SquareVA.reset(Mango::VertexArray::Create());
+		m_SquareVA = Mango::VertexArray::Create();
 
-		float squareVertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f,
+		float squareVertices[5 * 7] = {
+			// position        | UV
+			-0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f,  1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
 		};
 
-		std::shared_ptr<Mango::VertexBuffer> squareVB;
-		squareVB.reset(Mango::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		Mango::Ref<Mango::VertexBuffer> squareVB;
+		squareVB = Mango::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		squareVB->SetLayout({
 			{ Mango::ShaderDataType::Float3, "a_Position" },
-			});
+			{ Mango::ShaderDataType::Float2, "a_TexCoord" },
+		});
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		unsigned int squareIndices[6]{ 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<Mango::IndexBuffer> squareIB;
-		squareIB.reset(Mango::IndexBuffer::Create(squareIndices, 6));
+		Mango::Ref<Mango::IndexBuffer> squareIB;
+		squareIB = Mango::IndexBuffer::Create(squareIndices, 6);
 		m_SquareVA->SetIndexBuffer(squareIB);
 
 		std::string vertexSrc = R"(
@@ -92,7 +94,7 @@ public:
 			}
 		)";
 
-		m_Shader.reset(Mango::Shader::Create(vertexSrc, fragmentSrc));
+		m_Shader = Mango::Shader::Create(vertexSrc, fragmentSrc);
 
 		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
@@ -126,9 +128,47 @@ public:
 			}
 		)";
 
-		m_FlatColorShader.reset(Mango::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
+		m_FlatColorShader = Mango::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 
+		std::string textureShaderVertexSrc = R"(
+			#version 330 core
 
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Model;
+
+			out vec2 v_TexCoord;
+
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Model * vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string textureShaderFragmentSrc = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
+		m_TextureShader = Mango::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc);
+
+		m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
+	
+		m_TextureShader->Bind();
+		std::dynamic_pointer_cast<Mango::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Mango::Timestep ts) override
@@ -187,8 +227,12 @@ public:
 				Mango::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
 		}
+		
+		m_Texture->Bind();
+		Mango::Renderer::Submit(m_TextureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
 
-		Mango::Renderer::Submit(m_Shader, m_VertexArray);
+		// Triangle
+		// Mango::Renderer::Submit(m_Shader, m_VertexArray);
 
 		Mango::Renderer::EndScene();
 	}
@@ -206,11 +250,13 @@ public:
 	}
 
 private:
-	std::shared_ptr<Mango::Shader> m_Shader;
-	std::shared_ptr<Mango::VertexArray> m_VertexArray;
+	Mango::Ref<Mango::Shader> m_Shader;
+	Mango::Ref<Mango::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Mango::Shader> m_FlatColorShader;
-	std::shared_ptr<Mango::VertexArray> m_SquareVA;
+	Mango::Ref<Mango::Shader> m_FlatColorShader, m_TextureShader;
+	Mango::Ref<Mango::VertexArray> m_SquareVA;
+
+	Mango::Ref<Mango::Texture2D> m_Texture;
 
 	Mango::OrthographicCamera m_Camera;
 

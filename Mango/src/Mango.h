@@ -18,6 +18,7 @@
 
 #include "Mango/Renderer/Buffer.h"
 #include "Mango/Renderer/Shader.h"
+#include "Mango/Renderer/Texture.h"
 #include "Mango/Renderer/VertexArray.h"
 
 #include "Mango/Renderer/OrthographicCamera.h"

@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Mango/vendor/GLFW/include"
 IncludeDir["Glad"] = "Mango/vendor/Glad/include"
 IncludeDir["ImGui"] = "Mango/vendor/imgui"
 IncludeDir["glm"] = "Mango/vendor/glm"
+IncludeDir["stb_image"] = "Mango/vendor/stb_image"
 
 group "Dependencies"
 	include "Mango/vendor/GLFW"
@@ -42,6 +43,8 @@ project "Mango"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -58,6 +61,7 @@ project "Mango"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.glm}"
 	}
 

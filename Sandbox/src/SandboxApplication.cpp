@@ -166,6 +166,7 @@ public:
 		m_TextureShader = Mango::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc);
 
 		m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
+		m_MangoLogoTexture = Mango::Texture2D::Create("assets/textures/Mango.png");
 	
 		m_TextureShader->Bind();
 		std::dynamic_pointer_cast<Mango::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
@@ -230,6 +231,9 @@ public:
 		
 		m_Texture->Bind();
 		Mango::Renderer::Submit(m_TextureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
+		
+		m_MangoLogoTexture->Bind();
+		Mango::Renderer::Submit(m_TextureShader, m_SquareVA,  glm::scale(glm::mat4(1), glm::vec3(1.5f)));
 
 		// Triangle
 		// Mango::Renderer::Submit(m_Shader, m_VertexArray);
@@ -257,6 +261,7 @@ private:
 	Mango::Ref<Mango::VertexArray> m_SquareVA;
 
 	Mango::Ref<Mango::Texture2D> m_Texture;
+	Mango::Ref<Mango::Texture2D> m_MangoLogoTexture;
 
 	Mango::OrthographicCamera m_Camera;
 

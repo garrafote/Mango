@@ -1,6 +1,8 @@
 #include "MangoPCH.h"
 #include "Application.h"
 
+#include "Mango/Renderer/Renderer.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Mango {
@@ -14,6 +16,8 @@ namespace Mango {
 
 		m_Window = std::unique_ptr<Window>(Window::Create());
 		m_Window->SetEventCallback(MGO_BIND_EVENT_FN(Application::OnEvent));
+
+		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);

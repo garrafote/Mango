@@ -90,7 +90,7 @@ public:
 
 		m_Shader.reset(Mango::Shader::Create(vertexSrc, fragmentSrc));
 
-		std::string blueShaderVertexSrc = R"(
+		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -107,20 +107,22 @@ public:
 			}
 		)";
 
-		std::string blueShaderFragmentSrc = R"(
+		std::string flatColorShaderFragmentSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
 
 			in vec3 v_Position;
 
+			uniform vec4 u_Color;
+
 			void main()
 			{
-				color = vec4(0.2, 0.3, 0.8, 1.0);
+				color = u_Color;
 			}
 		)";
 
-		m_BlueShader.reset(Mango::Shader::Create(blueShaderVertexSrc, blueShaderFragmentSrc));
+		m_FlatColorShader.reset(Mango::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
 
 
 	}
@@ -164,13 +166,23 @@ public:
 
 		glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.1f));
 
+		//Mango::MaterialRef material = new Mango::Material(m_FlatColorShader);
+		//Mango::MaterialInstanceRef primaryMaterial = new Mango::MaterialInstance(material);
+		//primaryMaterial->Set("u_Color", m_PrimaryColor);
+		//Mango::MaterialInstanceRef secondaryMaterial = new Mango::MaterialInstance(material);
+		//secondaryMaterial->Set("u_Color", m_PrimaryColor);
+
 		for (int x = 0; x < 20; x++)
 		{
 			for (int y = 0; y < 20; y++)
 			{
 				glm::vec3 pos(x * 1.1f, y * 1.1f, 0.0f);
 				glm::mat4 transform = glm::translate(scale, pos);
-				Mango::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+				if ((x + y) % 2 == 0)
+					m_FlatColorShader->UploadUniform("u_Color", m_PrimaryColor);
+				else
+					m_FlatColorShader->UploadUniform("u_Color", m_SecondaryColor);
+				Mango::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
 		}
 
@@ -181,6 +193,15 @@ public:
 
 	void OnImGuiRender() override
 	{
+		ImGui::Begin("Properties");
+
+		ImGui::PushItemWidth(77);
+		ImGuiColorEditFlags colorPickerFlags = ImGuiColorEditFlags_NoInputs;
+		ImGui::ColorPicker4("Primary Color", &m_PrimaryColor.x, colorPickerFlags);
+		ImGui::ColorPicker4("Secondary Color", &m_SecondaryColor.x, colorPickerFlags);
+		ImGui::PopItemWidth();
+		
+		ImGui::End();
 	}
 
 	void OnEvent(Mango::Event& event) override
@@ -192,7 +213,7 @@ private:
 	std::shared_ptr<Mango::Shader> m_Shader;
 	std::shared_ptr<Mango::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Mango::Shader> m_BlueShader;
+	std::shared_ptr<Mango::Shader> m_FlatColorShader;
 	std::shared_ptr<Mango::VertexArray> m_SquareVA;
 
 	Mango::OrthographicCamera m_Camera;
@@ -202,6 +223,10 @@ private:
 
 	float m_CameraRotation = 0;
 	float m_CameraRotationSpeed = 180.0f;
+
+	// Properties
+	glm::vec4 m_PrimaryColor = { 0.8f, 0.2f, 0.3f, 1.0f };
+	glm::vec4 m_SecondaryColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };
 
 class Sandbox : public Mango::Application

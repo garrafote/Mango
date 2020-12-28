@@ -14,6 +14,7 @@ namespace Mango {
 		virtual void Unbind() const override;
 
 		virtual void UploadUniform(const std::string& name, const glm::mat4& matrix) override;
+		virtual void UploadUniform(const std::string& name, const glm::vec4& values) override;
 
 	private:
 		uint32_t m_RendererID;

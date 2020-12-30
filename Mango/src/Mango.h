@@ -9,6 +9,7 @@
 #include "Mango/Input.h"
 #include "Mango/KeyCodes.h"
 #include "Mango/MouseButtonCodes.h"
+#include "Mango/OrthographicCameraController.h"
 
 #include "Mango/ImGui/ImGuiLayer.h"
 
@@ -20,8 +21,6 @@
 #include "Mango/Renderer/Shader.h"
 #include "Mango/Renderer/Texture.h"
 #include "Mango/Renderer/VertexArray.h"
-
-#include "Mango/Renderer/OrthographicCamera.h"
 //----------------------------
 
 // ------ Entry Point --------

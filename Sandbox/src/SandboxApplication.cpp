@@ -11,7 +11,7 @@ class ExampleLayer : public Mango::Layer
 {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+		: Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
 	{
 		m_VertexArray = Mango::VertexArray::Create();
 
@@ -141,48 +141,17 @@ public:
 
 	void OnUpdate(Mango::Timestep ts) override
 	{
-		MGO_TRACE("Delta time: {0}s ({1}ms): ", ts.GetSeconds(), ts.GetMilliseconds());
+		// Update
+		m_CameraController.OnUpdate(ts);
 
-		// Update Camera
-		{
-			if (Mango::Input::IsKeyPressed(MGO_KEY_Q))
-				m_CameraRotation += m_CameraRotationSpeed * ts;
-
-			if (Mango::Input::IsKeyPressed(MGO_KEY_E))
-				m_CameraRotation -= m_CameraRotationSpeed * ts;
-
-			glm::vec3 delta(0);
-			if (Mango::Input::IsKeyPressed(MGO_KEY_A) || Mango::Input::IsKeyPressed(MGO_KEY_LEFT))
-				delta.x -= m_CameraMoveSpeed;
-
-			if (Mango::Input::IsKeyPressed(MGO_KEY_D) || Mango::Input::IsKeyPressed(MGO_KEY_RIGHT))
-				delta.x += m_CameraMoveSpeed;
-
-			if (Mango::Input::IsKeyPressed(MGO_KEY_W) || Mango::Input::IsKeyPressed(MGO_KEY_UP))
-				delta.y += m_CameraMoveSpeed;
-
-			if (Mango::Input::IsKeyPressed(MGO_KEY_S) || Mango::Input::IsKeyPressed(MGO_KEY_DOWN))
-				delta.y -= m_CameraMoveSpeed;
-
-			glm::quat rotation = glm::angleAxis(glm::radians(m_CameraRotation), glm::vec3(0, 0, 1));
-			m_CameraPosition += rotation * delta * ts;
-
-			m_Camera.SetPosition(m_CameraPosition);
-			m_Camera.SetRotation(m_CameraRotation);
-		}
-
+		// Render
 		Mango::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		Mango::RenderCommand::Clear();
 
-		Mango::Renderer::BeginScene(m_Camera);
+		Mango::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		glm::mat4 scale = glm::scale(glm::mat4(1), glm::vec3(0.1f));
 
-		//Mango::MaterialRef material = new Mango::Material(m_FlatColorShader);
-		//Mango::MaterialInstanceRef primaryMaterial = new Mango::MaterialInstance(material);
-		//primaryMaterial->Set("u_Color", m_PrimaryColor);
-		//Mango::MaterialInstanceRef secondaryMaterial = new Mango::MaterialInstance(material);
-		//secondaryMaterial->Set("u_Color", m_PrimaryColor);
 		m_FlatColorShader->Bind();
 		std::dynamic_pointer_cast<Mango::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
 		
@@ -217,9 +186,9 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(Mango::Event& event) override
+	void OnEvent(Mango::Event& e) override
 	{
-		Mango::EventDispatcher dispatcher(event);
+		m_CameraController.OnEvent(e);
 	}
 
 private:
@@ -234,13 +203,7 @@ private:
 	Mango::Ref<Mango::Texture2D> m_Texture;
 	Mango::Ref<Mango::Texture2D> m_MangoLogoTexture;
 
-	Mango::OrthographicCamera m_Camera;
-
-	glm::vec3 m_CameraPosition = glm::vec3(0);
-	float m_CameraMoveSpeed = 5.0f;
-
-	float m_CameraRotation = 0;
-	float m_CameraRotationSpeed = 180.0f;
+	Mango::OrthographicCameraController m_CameraController;
 
 	// Properties
 	glm::vec3 m_SquareColor = { 0.8f, 0.2f, 0.3f };

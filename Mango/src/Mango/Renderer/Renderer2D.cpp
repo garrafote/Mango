@@ -5,8 +5,7 @@
 #include "Shader.h"
 #include "RenderCommand.h"
 
-// TODO: To be removed
-#include "Platform/OpenGL/OpenGLShader.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Mango {
 
@@ -54,8 +53,7 @@ namespace Mango {
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		s_Data->Shader->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->Shader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->Shader)->UploadUniformMat4("u_Model", glm::mat4(1.0f));
+		s_Data->Shader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
@@ -70,7 +68,10 @@ namespace Mango {
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		s_Data->Shader->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->Shader)->UploadUniformFloat4("u_Color", color);
+		s_Data->Shader->SetFloat4("u_Color", color);
+
+		glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), position), { size.x, size.y, 1.0f });
+		s_Data->Shader->SetMat4("u_Model", transform);
 
 		s_Data->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);

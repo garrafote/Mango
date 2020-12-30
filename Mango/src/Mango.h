@@ -15,6 +15,7 @@
 
 // ------ Renderer  -----------
 #include "Mango/Renderer/Renderer.h"
+#include "Mango/Renderer/Renderer2D.h"
 #include "Mango/Renderer/RenderCommand.h"
 
 #include "Mango/Renderer/Buffer.h"

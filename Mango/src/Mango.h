@@ -22,7 +22,3 @@
 #include "Mango/Renderer/Texture.h"
 #include "Mango/Renderer/VertexArray.h"
 //----------------------------
-
-// ------ Entry Point --------
-#include "Mango/Core/EntryPoint.h"
-//----------------------------

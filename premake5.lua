@@ -78,7 +78,6 @@ project "Mango"
 
 		defines
 		{
-			"MANGO_PLATFORM_WINDOWS",
 			"GLFW_INCLUDE_NONE"
 		}
 
@@ -128,11 +127,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		systemversion "latest"
-
-		defines
-		{
-			"MANGO_PLATFORM_WINDOWS"
-		}
 
 	filter "configurations:Debug"
 		defines "MANGO_DEBUG"

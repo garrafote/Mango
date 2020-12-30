@@ -18,11 +18,8 @@ private:
 
 	Mango::OrthographicCameraController m_CameraController;
 
-	// Temp
-	Mango::Ref<Mango::Shader> m_FlatColorShader;
 	Mango::Ref<Mango::Texture2D> m_Texture;
-	Mango::Ref<Mango::VertexArray> m_QuadVA;
 
-	glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 1.0f };
+	glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 0.8f };
 };
 

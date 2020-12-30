@@ -32,7 +32,7 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 	Mango::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
 	Mango::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 1.0f, 0.7f }, { 0.3f, 0.2f, 0.8f, 1.0f });
-	Mango::Renderer2D::DrawQuad({ -0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture);
+	Mango::Renderer2D::DrawQuad({ -0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, { 10.0f, 10.0f });
 
 	Mango::Renderer2D::DrawQuad({ -0.0f, 0.0f, 0.1f }, { 0.8f, 0.8f }, m_SquareColor);
 	

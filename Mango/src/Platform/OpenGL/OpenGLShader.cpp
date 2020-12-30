@@ -84,19 +84,23 @@ namespace Mango {
 
 		const char* typeToken = "#type";
 		size_t typeTokenLength = strlen(typeToken);
+		// start of shader type declaration line
 		size_t pos = source.find(typeToken, 0);
 		while (pos != std::string::npos)
 		{
+			// end of shader type declaration line
 			size_t eol = source.find_first_of("\r\n", pos);
 			MGO_CORE_ASSERT(eol != std::string::npos, "Syntax error");
+			// start of shader type name (after "#type " keyword)
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
 			MGO_CORE_ASSERT(ShaderTypeFromString(type), "Invalid shader type specified!");
 
-
+			// start of shader code after shader type declaration line
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
+			MGO_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
 			pos = source.find(typeToken, nextLinePos);
-			shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
+			shaderSources[ShaderTypeFromString(type)] = (nextLinePos == std::string::npos)  ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
 		}
 
 		return shaderSources;
@@ -179,6 +183,7 @@ namespace Mango {
 		{
 			GLuint id = glShaderIDs[index];
 			glDetachShader(program, id);
+			glDeleteShader(id);
 		}
 		for (GLuint id : glShaderIDs)
 

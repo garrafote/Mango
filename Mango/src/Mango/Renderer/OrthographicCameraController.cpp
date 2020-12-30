@@ -1,8 +1,8 @@
 #include "MangoPCH.h"
 #include "OrthographicCameraController.h"
 
-#include "Mango/Input.h"
-#include "Mango/KeyCodes.h"
+#include "Mango/Core/Input.h"
+#include "Mango/Core/KeyCodes.h"
 #include <glm/gtx/quaternion.hpp>
 
 namespace Mango {
@@ -36,6 +36,8 @@ namespace Mango {
 
 			if (Input::IsKeyPressed(MGO_KEY_E))
 				m_CameraRotation -= m_CameraRotationSpeed * ts;
+
+			m_CameraRotation = std::fmod(m_CameraRotation + 360.0f, 360.0f);
 
 			glm::quat rotation = glm::angleAxis(glm::radians(m_CameraRotation), glm::vec3(0, 0, 1));
 			m_CameraPosition += rotation * delta * ts;

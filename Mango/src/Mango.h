@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Mango/Application.h"
-#include "Mango/Layer.h"
-#include "Mango/Log.h"
+#include "Mango/Core/Application.h"
+#include "Mango/Core/Layer.h"
+#include "Mango/Core/Log.h"
 
 #include "Mango/Core/Timestep.h"
 
-#include "Mango/Input.h"
-#include "Mango/KeyCodes.h"
-#include "Mango/MouseButtonCodes.h"
-#include "Mango/OrthographicCameraController.h"
+#include "Mango/Core/Input.h"
+#include "Mango/Core/KeyCodes.h"
+#include "Mango/Core/MouseButtonCodes.h"
+#include "Mango/Renderer/OrthographicCameraController.h"
 
 #include "Mango/ImGui/ImGuiLayer.h"
 
@@ -24,5 +24,5 @@
 //----------------------------
 
 // ------ Entry Point --------
-#include "Mango/EntryPoint.h"
+#include "Mango/Core/EntryPoint.h"
 //----------------------------

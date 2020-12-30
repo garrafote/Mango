@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mango/Input.h"
+#include "Mango/Core/Input.h"
 
 namespace Mango {
 

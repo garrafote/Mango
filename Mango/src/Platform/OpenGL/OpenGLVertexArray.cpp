@@ -21,6 +21,9 @@ namespace Mango {
 			case ShaderDataType::Int4:    return GL_INT;
 			case ShaderDataType::Bool:    return GL_BOOL;
 		}
+
+		MGO_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		return 0;
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray()
@@ -45,23 +48,23 @@ namespace Mango {
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		MGO_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
+		
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
-
-		MGO_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
 		uint32_t index = 0;
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index,
+			glEnableVertexAttribArray(m_VertexBufferIndex);
+			glVertexAttribPointer(m_VertexBufferIndex,
 				element.GetComponentCount(), 
 				ShaderDataTypeToOpenGLBaseType(element.Type),
 				element.Normalized ? GL_TRUE : GL_FALSE,
 				layout.GetStride(),
 				(const void*)element.Offset);
-			index++;
+			m_VertexBufferIndex++;
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);

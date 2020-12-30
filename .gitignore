@@ -2,14 +2,12 @@
 bin/
 intermediate/
 
-# Visual Studio
-.vs
-*.user
-
 # Visual Studio auto generated files
-*.vcxproj
-*.vcxproj.filters
+.vs
 *.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
 
 # ImGui
 Sandbox/imgui.ini

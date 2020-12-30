@@ -1,12 +1,12 @@
 #include "MangoPCH.h"
 #include "WindowsInput.h"
 
-#include "Mango/Application.h"
+#include "Mango/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace Mango {
 	
-	Input* Input::s_Instance = new WindowsInput();
+	Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
 
 	bool WindowsInput::IsKeyPressedImpl(int keycode)
 	{

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Mango/Core.h>
+#include "Mango/Core/Core.h"
 
 namespace Mango {
 	
@@ -23,6 +23,6 @@ namespace Mango {
 		virtual float GetMouseYImpl() = 0;
 
 	private:
-		static Input* s_Instance;
+		static Scope<Input> s_Instance;
 	};
 }

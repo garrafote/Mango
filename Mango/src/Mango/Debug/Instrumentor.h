@@ -123,11 +123,14 @@ namespace Mango {
     };
 }
 
+#define __MGO_TOKEN_PASTE__(x, y) x##y
+#define __MGO_TOKEN_EVALUATE__(x, y) __MGO_TOKEN_PASTE__(x, y)
+
 #define MANGO_PROFILE 1
 #if MANGO_PROFILE
     #define MGO_PROFILE_BEGIN_SESSION(name, filepath) ::Mango::Instrumentor::Get().BeginSession(name, filepath)
     #define MGO_PROFILE_END_SESSION() ::Mango::Instrumentor::Get().EndSession() 
-    #define MGO_PROFILE_SCOPE(name) ::Mango::InstrumentationTimer timer##__LINE__(name);
+    #define MGO_PROFILE_SCOPE(name) ::Mango::InstrumentationTimer __MGO_TOKEN_EVALUATE__(__timer,__COUNTER__)(name);
     #define MGO_PROFILE_FUNCTION() MGO_PROFILE_SCOPE(__FUNCSIG__)
 #else
     #define MGO_PROFILE_BEGIN_SESSION(name, filepath)

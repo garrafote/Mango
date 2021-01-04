@@ -11,3 +11,6 @@ intermediate/
 
 # ImGui
 Sandbox/imgui.ini
+
+# Profiling 
+Sandbox/MangoProfile*.json

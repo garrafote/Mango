@@ -15,6 +15,8 @@
 
 #include "Mango/Core/Log.h"
 
+#include "Mango/Debug/Instrumentor.h"
+
 #ifdef MANGO_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

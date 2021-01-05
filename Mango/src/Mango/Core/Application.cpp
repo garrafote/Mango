@@ -11,6 +11,8 @@ namespace Mango {
 
 	Application::Application()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		MGO_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -25,20 +27,31 @@ namespace Mango {
 
 	Application::~Application()
 	{
+		MGO_PROFILE_FUNCTION();
+
+		Renderer::Shutdown();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer* overlay)
+	void Application::PushOverlay(Layer* layer)
 	{
-		m_LayerStack.PushOverlay(overlay);
+		MGO_PROFILE_FUNCTION();
+
+		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		EventDispatcher	dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(MGO_BIND_EVENT_FN(Application::OnWindowClose));
 		dispatcher.Dispatch<WindowResizeEvent>(MGO_BIND_EVENT_FN(Application::OnWindowResize));
@@ -53,21 +66,33 @@ namespace Mango {
 
 	void Application::Run()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		while (m_Running)
 		{
+			MGO_PROFILE_SCOPE("RunLoop");
+
 			float time = (float)glfwGetTime(); // Platform::GetTime()
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)
 			{
-				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate(timestep);
+				{
+					MGO_PROFILE_SCOPE("LayerStack OnUpdate");
+
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
 			}
 
 			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiRender();
+			{
+				MGO_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+				for (Layer* layer : m_LayerStack)
+					layer->OnImGuiRender();
+			}
 			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
@@ -82,6 +107,8 @@ namespace Mango {
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;

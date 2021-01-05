@@ -28,26 +28,36 @@ namespace Mango {
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glGenVertexArrays(1, &m_RendererID);
 	}
 	
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 	
 	void OpenGLVertexArray::Bind() const
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererID);
 	}
 	
 	void OpenGLVertexArray::Unbind() const
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		MGO_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 		
 		glBindVertexArray(m_RendererID);
@@ -72,6 +82,8 @@ namespace Mango {
 	
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 

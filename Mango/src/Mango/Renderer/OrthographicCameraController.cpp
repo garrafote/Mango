@@ -15,6 +15,8 @@ namespace Mango {
 	}
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glm::vec3 delta(0);
 		float translationSpeed = m_CameraTranslationSpeed * m_ZoomLevel;
 		if (Input::IsKeyPressed(MGO_KEY_A))
@@ -54,6 +56,8 @@ namespace Mango {
 	}
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(MGO_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(MGO_BIND_EVENT_FN(OrthographicCameraController::OnWindowResize));
@@ -61,6 +65,8 @@ namespace Mango {
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.125f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.0125f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -70,6 +76,8 @@ namespace Mango {
 	
 	bool OrthographicCameraController::OnWindowResize(WindowResizeEvent& e)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 

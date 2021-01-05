@@ -20,6 +20,8 @@ namespace Mango {
 
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
@@ -36,6 +38,8 @@ namespace Mango {
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& filepath)
 		: m_Name(name)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
@@ -44,6 +48,8 @@ namespace Mango {
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 		: m_Name(name)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -52,11 +58,15 @@ namespace Mango {
 
 	OpenGLShader::~OpenGLShader()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_RendererID);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 
 		std::string result;
@@ -80,6 +90,8 @@ namespace Mango {
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -108,6 +120,8 @@ namespace Mango {
 
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		// Increase if needed
 		const int maxShaders = 2;
 		MGO_CORE_ASSERT(shaderSources.size() <= maxShaders, "Shader programs cannot have more than {0} shaders", maxShaders);
@@ -193,11 +207,15 @@ namespace Mango {
 
 	void OpenGLShader::Bind() const
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGLShader::Unbind() const
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 
@@ -208,31 +226,43 @@ namespace Mango {
 
 	void OpenGLShader::SetFloat(const std::string& name, float value)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		UploadUniformFloat(name, value);
 	}
 
 	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& value)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		UploadUniformFloat2(name, value);
 	}
 
 	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& value)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& value)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& value)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		UploadUniformMat3(name, value);
 	}
 
 	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& value)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		UploadUniformMat4(name, value);
 	}
 

@@ -8,7 +8,7 @@ extern Mango::Application* Mango::CreateApplication();
 int main(int argc, char** argv)
 {
 	Mango::Log::Init();
-	
+
 	MGO_PROFILE_BEGIN_SESSION("Startup", "MangoProfile-Startup.json");
 	Mango::Application* app = Mango::CreateApplication();
 	MGO_PROFILE_END_SESSION();

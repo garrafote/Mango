@@ -20,6 +20,8 @@ namespace Mango {
 
 	void Renderer2D::Init()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		s_Data = new Renderer2DStorage();
 
 		s_Data->QuadVertexArray = Mango::VertexArray::Create();
@@ -54,17 +56,23 @@ namespace Mango {
 
 	void Renderer2D::Shutdown()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		delete s_Data;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		s_Data->UnlitShader->Bind();
 		s_Data->UnlitShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
 	{
+		MGO_PROFILE_FUNCTION();
+
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -74,6 +82,8 @@ namespace Mango {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		s_Data->UnlitShader->SetFloat4("u_Color", color);
 		s_Data->UnlitShader->SetFloat4("u_Tiling", { 1.0, 1.0, 0.0, 0.0 });
 		s_Data->WhiteTexture->Bind();
@@ -94,6 +104,8 @@ namespace Mango {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		s_Data->UnlitShader->SetFloat4("u_Color", tintColor);
 		s_Data->UnlitShader->SetFloat4("u_Tiling", { tiling.x, tiling.y, offset.x, offset.y });
 		texture->Bind();
@@ -114,6 +126,8 @@ namespace Mango {
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		s_Data->UnlitShader->SetFloat4("u_Color", color);
 		s_Data->UnlitShader->SetFloat4("u_Tiling", { 1.0, 1.0, 0.0, 0.0 });
 		s_Data->WhiteTexture->Bind();
@@ -136,6 +150,8 @@ namespace Mango {
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		s_Data->UnlitShader->SetFloat4("u_Color", tintColor);
 		s_Data->UnlitShader->SetFloat4("u_Tiling", { tiling.x, tiling.y, offset.x, offset.y });
 		texture->Bind();

@@ -10,8 +10,17 @@ namespace Mango {
 
 	void Renderer::Init()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 		Renderer2D::Init();
+	}
+
+	void Renderer::Shutdown()
+	{
+		MGO_PROFILE_FUNCTION();
+
+		Renderer2D::Shutdown();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

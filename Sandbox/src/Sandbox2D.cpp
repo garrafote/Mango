@@ -14,11 +14,15 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
+	MGO_PROFILE_FUNCTION();
+
 	m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
 }
 
 void Sandbox2D::OnDettach()
 {
+	MGO_PROFILE_FUNCTION();
+
 }
 
 void Sandbox2D::OnUpdate(Mango::Timestep ts)
@@ -54,6 +58,8 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 
 void Sandbox2D::OnImGuiRender()
 {
+	MGO_PROFILE_FUNCTION();
+
 	ImGui::Begin("Properties");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 	ImGui::End();

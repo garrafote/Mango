@@ -7,6 +7,8 @@ namespace Mango {
 	
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, const glm::vec4& color)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		m_Width = width;
 		m_Height = height;
 
@@ -33,9 +35,15 @@ namespace Mango {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
 		: m_Path(path)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		stbi_uc* data = nullptr;
+		{
+			MGO_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
+			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		}
 		MGO_CORE_ASSERT(data, "Failed to load image!");
 		m_Width = width;
 		m_Height = height;
@@ -69,11 +77,15 @@ namespace Mango {
 
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glDeleteTextures(1, &m_RendererID);
 	}
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size)
 	{
+		MGO_PROFILE_FUNCTION();
+
 		uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 		MGO_CORE_ASSERT(size == m_Width * m_Height * bpp, "Data must be entire texture!");
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
@@ -81,6 +93,8 @@ namespace Mango {
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
+		MGO_PROFILE_FUNCTION();
+
 		glBindTextureUnit(slot, m_RendererID);
 	}
 }

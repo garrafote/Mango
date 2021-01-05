@@ -24,7 +24,7 @@ namespace Mango {
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* overlay);
+		void PushOverlay(Layer* layer);
 
 		inline static Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() { return *m_Window; }

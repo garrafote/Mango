@@ -11,6 +11,8 @@
 
 #include "Mango/ImGui/ImGuiLayer.h"
 
+int main(int argc, char** argv);
+
 namespace Mango {
 
 	class Application
@@ -19,8 +21,6 @@ namespace Mango {
 		Application();
 		virtual ~Application();
 
-		void Run();
-		
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
@@ -34,6 +34,7 @@ namespace Mango {
 		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
+		void Run();
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
@@ -43,6 +44,7 @@ namespace Mango {
 
 	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 	};
 
 	// To be defined in CLIENT

@@ -9,7 +9,7 @@
 
 namespace Mango {
 
-	static bool s_GLFWInitialized = false;
+	static int s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
@@ -46,19 +46,19 @@ namespace Mango {
 		MGO_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 		
 
-		if (!s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
 		{
 			MGO_PROFILE_SCOPE("glfwInit");
-			// TODO: glfwTerminate on system shutdown
+			MGO_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			MGO_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
-			s_GLFWInitialized = true;
 		}
 
 		{
 			MGO_PROFILE_SCOPE("glfwCreateWindow");
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
+			++s_GLFWWindowCount;
 		}
 
 		m_Context = CreateScope<OpenGLContext>(m_Window);
@@ -163,6 +163,13 @@ namespace Mango {
 		MGO_PROFILE_FUNCTION();
 
 		glfwDestroyWindow(m_Window);
+
+		s_GLFWWindowCount -= 1;
+		if (s_GLFWWindowCount == 0)
+		{
+			MGO_CORE_INFO("Terminating GLFW");
+			glfwTerminate();
+		}
 	}
 
 

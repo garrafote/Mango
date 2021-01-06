@@ -1,8 +1,8 @@
 #pragma once
 
-#include "OrthographicCamera.h"
+#include "Mango/Renderer/OrthographicCamera.h"
 
-#include "Texture.h"
+#include "Mango/Renderer/Texture.h"
 
 namespace Mango {
 

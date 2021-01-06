@@ -1,9 +1,9 @@
 #include "MangoPCH.h"
 #include "Renderer2D.h"
 
-#include "VertexArray.h"
-#include "Shader.h"
-#include "RenderCommand.h"
+#include "Mango/Renderer/VertexArray.h"
+#include "Mango/Renderer/Shader.h"
+#include "Mango/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -24,7 +24,7 @@ namespace Mango {
 
 		s_Data = new Renderer2DStorage();
 
-		s_Data->QuadVertexArray = Mango::VertexArray::Create();
+		s_Data->QuadVertexArray = VertexArray::Create();
 
 		float quadVertices[5 * 4] = {
 			// position        | UV
@@ -34,7 +34,7 @@ namespace Mango {
 			-0.5f,  0.5f, 0.0f,  0.0f, 1.0f,
 		};
 
-		Ref<Mango::VertexBuffer> quadVB;
+		Ref<VertexBuffer> quadVB;
 		quadVB = VertexBuffer::Create(quadVertices, sizeof(quadVertices));
 		quadVB->SetLayout({
 			{ ShaderDataType::Float3, "a_Position" },

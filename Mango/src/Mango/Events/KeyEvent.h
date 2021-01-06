@@ -4,7 +4,7 @@
 
 namespace Mango {
 
-	class MANGO_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int GetKeyCode() const { return m_KeyCode; }
@@ -18,7 +18,7 @@ namespace Mango {
 		int m_KeyCode;
 	};
 
-	class MANGO_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keyCode, int repeatCount)
@@ -39,7 +39,7 @@ namespace Mango {
 		int m_RepeatCount;
 	};
 
-	class MANGO_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keyCode)
@@ -55,7 +55,7 @@ namespace Mango {
 		EVENT_CLASS_TYPE(KeyReleased);
 	};
 	
-	class MANGO_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keyCode)

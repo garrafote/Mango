@@ -73,11 +73,18 @@ namespace Mango {
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
-			result.resize(in.tellg());
+			size_t size = in.tellg();
+			if (size != -1)
+			{
+				result.resize(in.tellg());
 
-			in.seekg(0, std::ios::beg);
-			in.read(&result[0], result.size());
-
+				in.seekg(0, std::ios::beg);
+				in.read(&result[0], result.size());
+			}
+			else
+			{
+				MGO_CORE_ERROR("Could not read from file {0}", filepath);
+			}
 			in.close();
 		}
 		else
@@ -112,7 +119,7 @@ namespace Mango {
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
 			MGO_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
 			pos = source.find(typeToken, nextLinePos);
-			shaderSources[ShaderTypeFromString(type)] = (nextLinePos == std::string::npos)  ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
+			shaderSources[ShaderTypeFromString(type)] = (nextLinePos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
 		}
 
 		return shaderSources;

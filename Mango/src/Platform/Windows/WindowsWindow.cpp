@@ -5,8 +5,6 @@
 #include "Mango/Events/KeyEvent.h"
 #include "Mango/Events/MouseEvent.h"
 
-#include "Platform/OpenGL/OpenGLContext.h"
-
 namespace Mango {
 
 	static int s_GLFWWindowCount = 0;
@@ -16,9 +14,9 @@ namespace Mango {
 		MGO_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Window* Window::Create(const WindowProps& props)
+	Scope<Window> Window::Create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		return CreateScope<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -49,7 +47,6 @@ namespace Mango {
 		if (s_GLFWWindowCount == 0)
 		{
 			MGO_PROFILE_SCOPE("glfwInit");
-			MGO_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			MGO_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
@@ -61,7 +58,7 @@ namespace Mango {
 			++s_GLFWWindowCount;
 		}
 
-		m_Context = CreateScope<OpenGLContext>(m_Window);
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -167,7 +164,6 @@ namespace Mango {
 		s_GLFWWindowCount -= 1;
 		if (s_GLFWWindowCount == 0)
 		{
-			MGO_CORE_INFO("Terminating GLFW");
 			glfwTerminate();
 		}
 	}

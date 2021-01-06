@@ -1,9 +1,9 @@
 #pragma once
 
-#include "RenderCommand.h"
+#include "Mango/Renderer/RenderCommand.h"
 
-#include "OrthographicCamera.h"
-#include "Shader.h"
+#include "Mango/Renderer/OrthographicCamera.h"
+#include "Mango/Renderer/Shader.h"
 
 namespace Mango {
 

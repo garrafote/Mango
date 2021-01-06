@@ -4,7 +4,7 @@
 
 namespace Mango {
 
-	class MANGO_API MouseMovedEvent : public Event 
+	class MouseMovedEvent : public Event 
 	{
 	public:
 		MouseMovedEvent(float x, float y)
@@ -26,7 +26,7 @@ namespace Mango {
 		float m_MouseX, m_MouseY;
 	};
 
-	class MANGO_API MouseScrolledEvent : public Event 
+	class MouseScrolledEvent : public Event 
 	{
 	public:
 		MouseScrolledEvent(float xOffset, float yOffset)
@@ -48,7 +48,7 @@ namespace Mango {
 		float m_XOffset, m_YOffset;
 	};
 
-	class MANGO_API MouseButtonEvent : public Event 
+	class MouseButtonEvent : public Event 
 	{
 	public:
 		inline int GetMouseButton() const { return m_Button; }
@@ -68,7 +68,7 @@ namespace Mango {
 		int m_Button;
 	};
 
-	class MANGO_API MouseButtonPressedEvent : public MouseButtonEvent 
+	class MouseButtonPressedEvent : public MouseButtonEvent 
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -77,7 +77,7 @@ namespace Mango {
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	class MANGO_API MouseButtonReleasedEvent : public MouseButtonEvent 
+	class MouseButtonReleasedEvent : public MouseButtonEvent 
 	{
 	public:
 		MouseButtonReleasedEvent(int button)

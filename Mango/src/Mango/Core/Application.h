@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core.h"
-#include "Window.h"
+#include "Mango/Core/Core.h"
 
+#include "Mango/Core/Window.h"
 #include "Mango/Core/LayerStack.h"
 #include "Mango/Events/Event.h"
 #include "Mango/Events/ApplicationEvent.h"
@@ -34,7 +34,7 @@ namespace Mango {
 		bool OnWindowResize(WindowResizeEvent& e);
 
 	private:
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		bool m_Minimized = false;

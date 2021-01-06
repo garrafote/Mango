@@ -1,7 +1,7 @@
 #include "MangoPCH.h"
 #include "OpenGLTexture.h"
 
-#include "stb_image.h"
+#include <stb_image.h>
 
 namespace Mango {
 	

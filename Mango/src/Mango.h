@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Mango/Core/Core.h"
+
 #include "Mango/Core/Application.h"
 #include "Mango/Core/Layer.h"
 #include "Mango/Core/Log.h"

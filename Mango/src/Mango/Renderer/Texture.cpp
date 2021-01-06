@@ -1,7 +1,7 @@
 #include "MangoPCH.h"
 #include "Texture.h"
 
-#include "Renderer.h"
+#include "Mango/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLTexture.h"
 

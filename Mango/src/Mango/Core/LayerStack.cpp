@@ -3,9 +3,6 @@
 
 
 namespace Mango {
-	LayerStack::LayerStack()
-	{
-	}
 
 	LayerStack::~LayerStack()
 	{

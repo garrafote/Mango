@@ -22,16 +22,16 @@ namespace Mango {
 
 // Core log macros
 
-#define MGO_CORE_TRACE(...)   ::Mango::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define MGO_CORE_INFO(...)    ::Mango::Log::GetCoreLogger()->info(__VA_ARGS__)
-#define MGO_CORE_WARN(...)    ::Mango::Log::GetCoreLogger()->warn(__VA_ARGS__)
-#define MGO_CORE_ERROR(...)   ::Mango::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define MGO_CORE_FATAL(...)   ::Mango::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define MGO_CORE_TRACE(...)     ::Mango::Log::GetCoreLogger()->trace(__VA_ARGS__)
+#define MGO_CORE_INFO(...)      ::Mango::Log::GetCoreLogger()->info(__VA_ARGS__)
+#define MGO_CORE_WARN(...)      ::Mango::Log::GetCoreLogger()->warn(__VA_ARGS__)
+#define MGO_CORE_ERROR(...)     ::Mango::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define MGO_CORE_CRITICAL(...)  ::Mango::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
 // Client log macros
 
-#define MGO_TRACE(...)        ::Mango::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define MGO_INFO(...)         ::Mango::Log::GetClientLogger()->info(__VA_ARGS__)
-#define MGO_WARN(...)         ::Mango::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define MGO_ERROR(...)        ::Mango::Log::GetClientLogger()->error(__VA_ARGS__)
-#define MGO_FATAL(...)        ::Mango::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define MGO_TRACE(...)          ::Mango::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define MGO_INFO(...)           ::Mango::Log::GetClientLogger()->info(__VA_ARGS__)
+#define MGO_WARN(...)           ::Mango::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define MGO_ERROR(...)          ::Mango::Log::GetClientLogger()->error(__VA_ARGS__)
+#define MGO_CRITICAL(...)       ::Mango::Log::GetClientLogger()->critical(__VA_ARGS__)

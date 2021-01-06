@@ -10,7 +10,7 @@
 
 #include "Mango/Core/Input.h"
 #include "Mango/Core/KeyCodes.h"
-#include "Mango/Core/MouseButtonCodes.h"
+#include "Mango/Core/MouseButtons.h"
 #include "Mango/Renderer/OrthographicCameraController.h"
 
 #include "Mango/ImGui/ImGuiLayer.h"

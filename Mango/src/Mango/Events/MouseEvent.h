@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Event.h"
+#include "Mango/Events/Event.h"
+#include "Mango/Core/MouseButtons.h"
 
 namespace Mango {
 
@@ -51,7 +52,7 @@ namespace Mango {
 	class MouseButtonEvent : public Event 
 	{
 	public:
-		inline int GetMouseButton() const { return m_Button; }
+		inline MouseButton GetMouseButton() const { return m_Button; }
 
 		std::string ToString() const override
 		{
@@ -62,16 +63,16 @@ namespace Mango {
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryMouseButton | EventCategoryInput)
 	protected:
-		MouseButtonEvent(int button)
+		MouseButtonEvent(MouseButton button)
 			: m_Button(button) { }
 		
-		int m_Button;
+		MouseButton m_Button;
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent 
 	{
 	public:
-		MouseButtonPressedEvent(int button)
+		MouseButtonPressedEvent(MouseButton button)
 			: MouseButtonEvent(button) { }
 
 		EVENT_CLASS_TYPE(MouseButtonPressed)
@@ -80,7 +81,7 @@ namespace Mango {
 	class MouseButtonReleasedEvent : public MouseButtonEvent 
 	{
 	public:
-		MouseButtonReleasedEvent(int button)
+		MouseButtonReleasedEvent(MouseButton button)
 			: MouseButtonEvent(button) { }
 
 		EVENT_CLASS_TYPE(MouseButtonReleased)

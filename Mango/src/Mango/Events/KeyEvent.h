@@ -1,28 +1,35 @@
 #pragma once
 
-#include "Event.h"
+#include "Mango/Events/Event.h"
+#include "Mango/Core/KeyCodes.h"
 
 namespace Mango {
 
 	class KeyEvent : public Event
 	{
-	public:
-		inline int GetKeyCode() const { return m_KeyCode; }
-
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
 	protected:
-		KeyEvent(int keyCode)
-			: m_KeyCode(keyCode) {}
-
-		int m_KeyCode;
+		KeyEvent() = default;
 	};
 
-	class KeyPressedEvent : public KeyEvent
+	class KeyCodeEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keyCode, int repeatCount)
-			: KeyEvent(keyCode), m_RepeatCount(repeatCount) { }
+		inline KeyCode GetKeyCode() const { return m_KeyCode; }
+
+	protected:
+		KeyCodeEvent(KeyCode keyCode)
+			: m_KeyCode(keyCode) {}
+
+		KeyCode m_KeyCode;
+	};
+
+	class KeyPressedEvent : public KeyCodeEvent
+	{
+	public:
+		KeyPressedEvent(KeyCode keyCode, int repeatCount)
+			: KeyCodeEvent(keyCode), m_RepeatCount(repeatCount) { }
 	
 		inline int GetRepeatCount() const { return m_RepeatCount; }
 
@@ -39,11 +46,11 @@ namespace Mango {
 		int m_RepeatCount;
 	};
 
-	class KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyCodeEvent
 	{
 	public:
-		KeyReleasedEvent(int keyCode)
-			: KeyEvent(keyCode) { }
+		KeyReleasedEvent(KeyCode keyCode)
+			: KeyCodeEvent(keyCode) { }
 		
 		std::string ToString() const override
 		{
@@ -58,17 +65,20 @@ namespace Mango {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int keyCode)
-			: KeyEvent(keyCode) { }
+		KeyTypedEvent(uint32_t codepoint)
+			: KeyEvent(), m_Codepoint(codepoint) { }
 		
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyTyped: " << m_KeyCode;
+			ss << "KeyTyped: " << m_Codepoint;
 			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyTyped);
+
+	private:
+		uint32_t m_Codepoint;
 	};
 
 }

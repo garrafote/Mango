@@ -4,6 +4,7 @@
 #include "Mango/Events/ApplicationEvent.h"
 #include "Mango/Events/KeyEvent.h"
 #include "Mango/Events/MouseEvent.h"
+#include "Mango/Renderer/Renderer.h"
 
 namespace Mango {
 
@@ -54,6 +55,10 @@ namespace Mango {
 
 		{
 			MGO_PROFILE_SCOPE("glfwCreateWindow");
+#if MANGO_DEBUG
+			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, props.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
 		}
@@ -90,19 +95,19 @@ namespace Mango {
 				{
 				case GLFW_PRESS:
 					{
-						KeyPressedEvent event(key, 0);
+						KeyPressedEvent event(static_cast<KeyCode>(key), 0);
 						data.EventCallback(event);
 						break;
 					}
 				case GLFW_REPEAT:
 					{
-						KeyPressedEvent event(key, 1);
+						KeyPressedEvent event(static_cast<KeyCode>(key), 1);
 						data.EventCallback(event);
 						break;
 					}
 				case GLFW_RELEASE:
 					{
-						KeyReleasedEvent event(key);
+						KeyReleasedEvent event(static_cast<KeyCode>(key));
 						data.EventCallback(event);
 						break;
 					}
@@ -125,13 +130,13 @@ namespace Mango {
 				{
 				case GLFW_PRESS:
 					{
-						MouseButtonPressedEvent event(button);
+						MouseButtonPressedEvent event(static_cast<MouseButton>(button));
 						data.EventCallback(event);
 						break;
 					}
 				case GLFW_RELEASE:
 					{
-						MouseButtonReleasedEvent event(button);
+						MouseButtonReleasedEvent event(static_cast<MouseButton>(button));
 						data.EventCallback(event);
 						break;
 					}

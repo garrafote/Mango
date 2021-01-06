@@ -4,9 +4,35 @@
 #include <glad/glad.h>
 
 namespace Mango {
+
+	void OpenGLMessageCallback(
+		unsigned source,
+		unsigned type,
+		unsigned id,
+		unsigned severity,
+		int length,
+		const char* message,
+		const void* userParam)
+	{
+		switch (severity)
+		{
+		case GL_DEBUG_SEVERITY_HIGH:           MGO_CORE_CRITICAL(message); return;
+		case GL_DEBUG_SEVERITY_MEDIUM:         MGO_CORE_ERROR(message); return;
+		case GL_DEBUG_SEVERITY_LOW:            MGO_CORE_WARN(message); return;
+		case GL_DEBUG_SEVERITY_NOTIFICATION:   MGO_CORE_TRACE(message); return;
+		}
+	}
+
 	void OpenGLRendererAPI::Init()
 	{
 		MGO_PROFILE_FUNCTION();
+
+#if MANGO_DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glDebugMessageCallback(OpenGLMessageCallback, nullptr);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
+#endif
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

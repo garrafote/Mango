@@ -15,7 +15,8 @@ namespace Mango {
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TexCoord;
-		// TODO: color, texid
+		int32_t TexIndex;
+		glm::vec4 Tiling;
 	};
 
 	struct Renderer2DData
@@ -23,6 +24,7 @@ namespace Mango {
 		const uint32_t MaxQuads = 10000;
 		const uint32_t MaxVertices = MaxQuads * 4;
 		const uint32_t MaxIndices = MaxQuads * 6;
+		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
@@ -32,14 +34,12 @@ namespace Mango {
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
-	} s_Data;
 
-	glm::vec3 TransformPosition(const glm::vec3& position, const glm::mat4& transform)
-	{
-		glm::vec4 v = transform * glm::vec4(position, 1.0f);
-		float _1w = 1.0f / v.w;
-		return { v.x * _1w, v.y * _1w, v.z * _1w };
-	}
+		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
+		uint32_t TextureSlotIndex = 1;
+
+		glm::vec4 QuadVertexPositions[4];
+	} s_Data;
 
 	void Renderer2D::Init()
 	{
@@ -52,6 +52,8 @@ namespace Mango {
 			{ ShaderDataType::Float3, "a_Position" },
 			{ ShaderDataType::Float4, "a_Color" },
 			{ ShaderDataType::Float2, "a_TexCoord" },
+			{ ShaderDataType::Int, "a_TexIndex" },
+			{ ShaderDataType::Float4, "a_Tiling" },
 		});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -76,7 +78,18 @@ namespace Mango {
 
 		s_Data.UnlitShader = Shader::Create("assets/shaders/Unlit2D.glsl");
 		s_Data.UnlitShader->Bind();
-		s_Data.UnlitShader->SetInt("u_Texture", 0);
+		
+		int32_t samplers[s_Data.MaxTextureSlots];
+		for (int32_t index = 0; index < s_Data.MaxTextureSlots; index++)
+			samplers[index] = index;
+		s_Data.UnlitShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+
+		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
+
+		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 	}
 
 	void Renderer2D::Shutdown()
@@ -90,16 +103,18 @@ namespace Mango {
 
 		s_Data.UnlitShader->Bind();
 		s_Data.UnlitShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		s_Data.UnlitShader->SetInt("u_Textures", 0);
 		
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		s_Data.TextureSlotIndex = 1;
 	}
 
 	void Renderer2D::EndScene()
 	{
 		MGO_PROFILE_FUNCTION();
 
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+		size_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		Flush();
@@ -108,6 +123,11 @@ namespace Mango {
 	void Renderer2D::Flush()
 	{
 		MGO_PROFILE_FUNCTION();
+
+		for (uint32_t index = 0; index < s_Data.TextureSlotIndex; index++)
+		{
+			s_Data.TextureSlots[index]->Bind(index);
+		}
 
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 	}
@@ -173,24 +193,47 @@ namespace Mango {
 	{
 		MGO_PROFILE_FUNCTION();
 
-		s_Data.QuadVertexBufferPtr->Position = TransformPosition({ -0.5f, -0.5f, 0.0f }, transform);
+		int32_t textureIndex = -1;
+		for (int32_t index = 0; index < static_cast<int32_t>(s_Data.TextureSlotIndex); index++)
+		{
+			if (*s_Data.TextureSlots[index].get() == *texture.get())
+			{
+				textureIndex = index;
+			}
+		}
+
+		if (textureIndex == -1)
+		{
+			textureIndex = s_Data.TextureSlotIndex++;
+			s_Data.TextureSlots[textureIndex] = texture;
+		}
+
+		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
 		s_Data.QuadVertexBufferPtr->Color = tintColor;
 		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
 		s_Data.QuadVertexBufferPtr++;
 		
-		s_Data.QuadVertexBufferPtr->Position = TransformPosition({ 0.5f, -0.5f, 0.0f }, transform);
+		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
 		s_Data.QuadVertexBufferPtr->Color = tintColor;
 		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
 		s_Data.QuadVertexBufferPtr++;
 		
-		s_Data.QuadVertexBufferPtr->Position = TransformPosition({ 0.5f, 0.5f, 0.0f }, transform);
+		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
 		s_Data.QuadVertexBufferPtr->Color = tintColor;
 		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
 		s_Data.QuadVertexBufferPtr++;
 		
-		s_Data.QuadVertexBufferPtr->Position = TransformPosition({ -0.5f, 0.5f, 0.0f }, transform);
+		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
 		s_Data.QuadVertexBufferPtr->Color = tintColor;
 		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
+		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
 		s_Data.QuadVertexBufferPtr++;
 
 		s_Data.QuadIndexCount += 6;

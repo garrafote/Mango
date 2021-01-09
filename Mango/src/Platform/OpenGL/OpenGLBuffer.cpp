@@ -48,7 +48,7 @@ namespace Mango {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	void OpenGLVertexBuffer::SetData(const void* data, size_t size)
 	{
 		MGO_PROFILE_FUNCTION();
 

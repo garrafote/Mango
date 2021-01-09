@@ -13,7 +13,7 @@ namespace Mango {
 	{
 		Ref<VertexArray> QuadVertexArray;
 		Ref<Shader> UnlitShader;
-		Ref<Texture> WhiteTexture;
+		Ref<Texture2D> WhiteTexture;
 	};
 
 	static Renderer2DStorage* s_Data;
@@ -82,20 +82,27 @@ namespace Mango {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
-		MGO_PROFILE_FUNCTION();
-
-		s_Data->UnlitShader->SetFloat4("u_Color", color);
-		s_Data->UnlitShader->SetFloat4("u_Tiling", { 1.0, 1.0, 0.0, 0.0 });
-		s_Data->WhiteTexture->Bind();
-
-		glm::mat4 transform = glm::mat4(1.0f);
+		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
 		transform = glm::scale(transform, { size.x, size.y, 1.0f });
-		s_Data->UnlitShader->SetMat4("u_Model", transform);
-		
-		s_Data->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		DrawQuad(transform, s_Data->WhiteTexture, { 1.0f, 1.0f, 0.0f, 0.0f }, color);
 	}
+
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	{
+		DrawQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	{
+		glm::mat4 transform(1.0f);
+		transform = glm::translate(transform, position);
+		transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
+		transform = glm::scale(transform, { size.x, size.y, 1.0f });
+		DrawQuad(transform, s_Data->WhiteTexture, { 1.0f, 1.0f, 0.0f, 0.0f }, color);
+	}
+
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
@@ -104,66 +111,39 @@ namespace Mango {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
-		MGO_PROFILE_FUNCTION();
-
-		s_Data->UnlitShader->SetFloat4("u_Color", tintColor);
-		s_Data->UnlitShader->SetFloat4("u_Tiling", { tiling.x, tiling.y, offset.x, offset.y });
-		texture->Bind();
-
-		glm::mat4 transform = glm::mat4(1.0f);
+		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
 		transform = glm::scale(transform, { size.x, size.y, 1.0f });
-		s_Data->UnlitShader->SetMat4("u_Model", transform);
-		
-		s_Data->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		DrawQuad(transform, texture, glm::vec4(tiling.x, tiling.y, offset.x, offset.y), tintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+		DrawQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tiling, offset);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
-		MGO_PROFILE_FUNCTION();
-
-		s_Data->UnlitShader->SetFloat4("u_Color", color);
-		s_Data->UnlitShader->SetFloat4("u_Tiling", { 1.0, 1.0, 0.0, 0.0 });
-		s_Data->WhiteTexture->Bind();
-
-		glm::mat4 transform = glm::mat4(1.0f);
+		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
 		transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
 		transform = glm::scale(transform, { size.x, size.y, 1.0f });
-		
-		s_Data->UnlitShader->SetMat4("u_Model", transform);
-		
-		s_Data->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		DrawQuad(transform, texture, glm::vec4(tiling.x, tiling.y, offset.x, offset.y), tintColor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
-	{
-		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tiling, offset);
-	}
 
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffsett, const glm::vec4& tintColor)
 	{
 		MGO_PROFILE_FUNCTION();
 
 		s_Data->UnlitShader->SetFloat4("u_Color", tintColor);
-		s_Data->UnlitShader->SetFloat4("u_Tiling", { tiling.x, tiling.y, offset.x, offset.y });
+		s_Data->UnlitShader->SetFloat4("u_Tiling", tilingAndOffsett);
 		texture->Bind();
 
-		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::translate(transform, position);
-		transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
-		transform = glm::scale(transform, { size.x, size.y, 1.0f });
 		s_Data->UnlitShader->SetMat4("u_Model", transform);
 		
 		s_Data->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
 	}
-
 }

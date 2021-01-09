@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <chrono>
@@ -47,10 +48,10 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 		MGO_PROFILE_SCOPE("Renderer Draw");
 		Mango::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-		Mango::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 1.0f, 0.7f }, { 0.3f, 0.2f, 0.8f, 1.0f });
+		Mango::Renderer2D::DrawQuad({ 0.0f, -0.0f }, { 1.0f, 1.0f }, { 0.3f, 0.2f, 0.8f, 1.0f });
 		Mango::Renderer2D::DrawQuad({ -0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, { 10.0f, 10.0f }, { 0.0f, 0.0f }, { 0.6f, 0.2f, 0.8f, 1.0f });
 
-		Mango::Renderer2D::DrawQuad({ -0.0f, 0.0f, 0.1f }, { 0.8f, 0.8f }, glm::radians(45.0f), m_SquareColor);
+		Mango::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.1f }, { 0.8f, 0.8f }, glm::radians(45.0f), m_SquareColor);
 
 		Mango::Renderer2D::EndScene();
 	}

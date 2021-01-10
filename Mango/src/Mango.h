@@ -23,5 +23,6 @@
 #include "Mango/Renderer/Buffer.h"
 #include "Mango/Renderer/Shader.h"
 #include "Mango/Renderer/Texture.h"
+#include "Mango/Renderer/SubTexture2D.h"
 #include "Mango/Renderer/VertexArray.h"
 //----------------------------

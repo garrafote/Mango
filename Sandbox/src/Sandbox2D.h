@@ -20,7 +20,9 @@ private:
 
 	Mango::OrthographicCameraController m_CameraController;
 
-	Mango::Ref<Mango::Texture2D> m_Texture;
+	Mango::Ref<Mango::Texture2D> m_CheckerboardTexture;
+	Mango::Ref<Mango::Texture2D> m_Spritesheet;
+	Mango::Ref<Mango::SubTexture2D> m_BarrelSprite, m_StairsSprite, m_TreeSprite;
 
 	glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 0.8f };
 

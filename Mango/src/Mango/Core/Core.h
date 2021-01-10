@@ -40,12 +40,23 @@
 #endif
 
 #ifdef MANGO_DEBUG
+	#if defined(MANGO_PLATFORM_WINDOWS)
+		#define __MGO_DEBUGBREAK() __debugbreak()
+	#elif defined(MANGO_PLATFORM_LINUX)
+		#include <signal.h>
+		#define __MGO_DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#define __MGO_DEBUGBREAK()
+		//#error "Platform doesn't support debugbreak yet!"
+	#endif
 	#define MANGO_ENABLE_ASSERTS
+#else
+	#define __MGO_DEBUGBREAK()
 #endif
 
 #ifdef MANGO_ENABLE_ASSERTS
-	#define MGO_ASSERT(X, ...) { if (!(X)) { MGO_ERROR("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#define MGO_CORE_ASSERT(X, ...) { if (!(X)) { MGO_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define MGO_ASSERT(X, ...) { if (!(X)) { MGO_ERROR("Assertion failed: {0}", __VA_ARGS__); __MGO_DEBUGBREAK(); } }
+	#define MGO_CORE_ASSERT(X, ...) { if (!(X)) { MGO_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); __MGO_DEBUGBREAK(); } }
 #else
 	#define MGO_ASSERT(X, ...) 
 	#define MGO_CORE_ASSERT(X, ...) 

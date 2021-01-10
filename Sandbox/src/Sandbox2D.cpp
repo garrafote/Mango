@@ -9,7 +9,7 @@
 #include <chrono>
 
 Sandbox2D::Sandbox2D()
-	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f, true), m_ParticleSystem(1000000)
+	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f, true), m_ParticleSystem(10000)
 {
 }
 
@@ -17,7 +17,11 @@ void Sandbox2D::OnAttach()
 {
 	MGO_PROFILE_FUNCTION();
 
-	m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
+	m_CheckerboardTexture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
+	m_Spritesheet = Mango::Texture2D::Create("assets/game/textures/RPGpack_sheet_2X.png");
+	m_StairsSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 7, 6 }, glm::vec2(128));
+	m_BarrelSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 8, 2 }, glm::vec2(128));
+	m_TreeSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 2, 1 }, glm::vec2(128), { 1, 2 });
 	
 	// Init here
 	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
@@ -56,17 +60,17 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 	// Render Draw
 	{
 		MGO_PROFILE_SCOPE("Renderer Draw");
+#if 0
 		Mango::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
 		Mango::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.3f, 0.2f, 0.8f, 1.0f });
-		Mango::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_Texture, { 10.0f, 10.0f });
+		Mango::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, { 10.0f, 10.0f });
 
 		static float rotation = 0;
 		rotation += ts.GetSeconds() * 10;
-		Mango::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.1f }, { 0.8f, 0.8f }, glm::radians(rotation), m_Texture, {1.0f, 1.0f}, {0.0f, 0.0f}, m_SquareColor);
+		Mango::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.1f }, { 0.8f, 0.8f }, glm::radians(rotation), m_CheckerboardTexture, {1.0f, 1.0f}, {0.0f, 0.0f}, m_SquareColor);
 
 		Mango::Renderer2D::EndScene();
-
 
 		Mango::Renderer2D::BeginScene(m_CameraController.GetCamera());
 		for (float y = -5.0f; y < 5.0f; y += 0.5f)
@@ -78,7 +82,18 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 			}
 		}
 		Mango::Renderer2D::EndScene();
+#endif
 
+		Mango::Renderer2D::BeginScene(m_CameraController.GetCamera());
+	
+		float tileOffsetX = 128.0f / (float)m_Spritesheet->GetWidth();
+		float tileOffsetY = 128.0f / (float)m_Spritesheet->GetHeight();
+		Mango::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.3f }, { 1.0f, 1.0f }, m_StairsSprite);
+		Mango::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.3f }, { 1.0f, 1.0f }, m_BarrelSprite);
+		Mango::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.3f }, { 1.0f, 2.0f }, m_TreeSprite);
+		
+		Mango::Renderer2D::EndScene();
+		
 		if (Mango::Input::IsMouseButtonPressed(MGO_MOUSE_BUTTON_LEFT))
 		{
 			auto [x, y] = Mango::Input::GetMousePosition();
@@ -90,7 +105,7 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 			x = (x / width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
 			y = bounds.GetHeight() * 0.5f - (y / height) * bounds.GetHeight();
 			m_Particle.Position = { x + pos.x, y + pos.y };
-			for (int i = 0; i < 500; i++)
+			for (int i = 0; i < 5; i++)
 				m_ParticleSystem.Emit(m_Particle);
 		}
 

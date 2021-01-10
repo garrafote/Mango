@@ -9,7 +9,7 @@
 #include <glm/gtx/transform.hpp>
 
 namespace Mango {
-	
+
 	struct QuadVertex
 	{
 		glm::vec3 Position;
@@ -75,12 +75,12 @@ namespace Mango {
 		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
 		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
 		delete[] quadIndices;
-		
+
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 
 		s_Data.UnlitShader = Shader::Create("assets/shaders/Unlit2D.glsl");
 		s_Data.UnlitShader->Bind();
-		
+
 		int32_t samplers[s_Data.MaxTextureSlots];
 		for (int32_t index = 0; index < s_Data.MaxTextureSlots; index++)
 			samplers[index] = index;
@@ -105,7 +105,7 @@ namespace Mango {
 
 		s_Data.UnlitShader->Bind();
 		s_Data.UnlitShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		
+
 		Reset();
 	}
 
@@ -119,7 +119,7 @@ namespace Mango {
 	void Renderer2D::Flush()
 	{
 		MGO_PROFILE_FUNCTION();
-		
+
 		size_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
@@ -147,21 +147,21 @@ namespace Mango {
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, color);
+		DrawQuad(glm::vec3(position, 0.0f), size, color);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
-		transform = glm::scale(transform, { size.x, size.y, 1.0f });
+		transform = glm::scale(transform, { size, 1.0f });
 		DrawQuad(transform, s_Data.WhiteTexture, { 1.0f, 1.0f, 0.0f, 0.0f }, color);
 	}
 
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, rotation, color);
+		DrawQuad(glm::vec3(position, 0.0f), size, rotation, color);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
@@ -169,28 +169,28 @@ namespace Mango {
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
 		transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
-		transform = glm::scale(transform, { size.x, size.y, 1.0f });
+		transform = glm::scale(transform, { size, 1.0f });
 		DrawQuad(transform, s_Data.WhiteTexture, { 1.0f, 1.0f, 0.0f, 0.0f }, color);
 	}
 
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, texture, tiling, offset);
+		DrawQuad(glm::vec3(position, 0.0f), size, texture, tiling, offset);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
-		transform = glm::scale(transform, { size.x, size.y, 1.0f });
-		DrawQuad(transform, texture, glm::vec4(tiling.x, tiling.y, offset.x, offset.y), tintColor);
+		transform = glm::scale(transform, { size, 1.0f });
+		DrawQuad(transform, texture, glm::vec4(tiling, offset), tintColor);
 	}
 
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
 	{
-		DrawQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tiling, offset);
+		DrawQuad(glm::vec3(position, 0.0f), size, rotation, texture, tiling, offset);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling, const glm::vec2& offset, const glm::vec4& tintColor)
@@ -198,11 +198,38 @@ namespace Mango {
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, position);
 		transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
-		transform = glm::scale(transform, { size.x, size.y, 1.0f });
-		DrawQuad(transform, texture, glm::vec4(tiling.x, tiling.y, offset.x, offset.y), tintColor);
+		transform = glm::scale(transform, { size, 1.0f });
+		DrawQuad(transform, texture, glm::vec4(tiling, offset), tintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffsett, const glm::vec4& tintColor)
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor)
+	{
+		DrawQuad(glm::vec3(position, 0.0f), size, subtexture, tintColor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor)
+	{
+		glm::mat4 transform(1.0f);
+		transform = glm::translate(transform, position);
+		transform = glm::scale(transform, { size, 1.0f });
+		DrawQuad(transform, subtexture->GetTexture(), glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), tintColor, subtexture->GetTexCoords());
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor)
+	{
+		DrawQuad(glm::vec3(position, 0.0f), size, rotation, subtexture, tintColor);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor)
+	{
+		glm::mat4 transform(1.0f);
+		transform = glm::translate(transform, position);
+		transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
+		transform = glm::scale(transform, { size, 1.0f });
+		DrawQuad(transform, subtexture->GetTexture(), glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), tintColor, subtexture->GetTexCoords());
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffsett, const glm::vec4& tintColor, const glm::vec2* quadTexCoords)
 	{
 		MGO_PROFILE_FUNCTION();
 
@@ -221,37 +248,25 @@ namespace Mango {
 
 		if (textureIndex == -1)
 		{
+			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+				FlushAndReset();
+
 			textureIndex = s_Data.TextureSlotIndex++;
 			s_Data.TextureSlots[textureIndex] = texture;
 		}
 
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-		s_Data.QuadVertexBufferPtr->Color = tintColor;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
-		s_Data.QuadVertexBufferPtr++;
-		
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-		s_Data.QuadVertexBufferPtr->Color = tintColor;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 0.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
-		s_Data.QuadVertexBufferPtr++;
-		
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-		s_Data.QuadVertexBufferPtr->Color = tintColor;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 1.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
-		s_Data.QuadVertexBufferPtr++;
-		
-		s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-		s_Data.QuadVertexBufferPtr->Color = tintColor;
-		s_Data.QuadVertexBufferPtr->TexCoord = { 0.0f, 1.0f };
-		s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-		s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
-		s_Data.QuadVertexBufferPtr++;
+		constexpr glm::vec2 defaultTexCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+		const glm::vec2* texCoords = quadTexCoords ? quadTexCoords : defaultTexCoords;
+
+		for (size_t index = 0; index < 4; index++)
+		{
+			s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[index];
+			s_Data.QuadVertexBufferPtr->Color = tintColor;
+			s_Data.QuadVertexBufferPtr->TexCoord = texCoords[index];
+			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+			s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
+			s_Data.QuadVertexBufferPtr++;
+		}
 
 		s_Data.QuadIndexCount += 6;
 

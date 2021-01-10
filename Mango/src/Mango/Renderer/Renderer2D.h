@@ -3,6 +3,7 @@
 #include "Mango/Renderer/OrthographicCamera.h"
 
 #include "Mango/Renderer/Texture.h"
+#include "Mango/Renderer/SubTexture2D.h"
 
 namespace Mango {
 
@@ -27,7 +28,12 @@ namespace Mango {
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling = glm::vec2(1.0f), const glm::vec2& offset = glm::vec2(0.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, const glm::vec2& tiling = glm::vec2(1.0f), const glm::vec2& offset = glm::vec2(0.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 	
-		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffset = glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor = glm::vec4(1.0f));
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subtexture, const glm::vec4& tintColor = glm::vec4(1.0f));
+	
+		static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffset = glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), const glm::vec4& tintColor = glm::vec4(1.0f), const glm::vec2* quadTexCoords = nullptr);
 
 		// Stats
 		struct Statistics

@@ -21,9 +21,9 @@ namespace Mango {
 
 	struct Renderer2DData
 	{
-		const uint32_t MaxQuads = 10000;
-		const uint32_t MaxVertices = MaxQuads * 4;
-		const uint32_t MaxIndices = MaxQuads * 6;
+		static const uint32_t MaxQuads = 10000;
+		static const uint32_t MaxVertices = MaxQuads * 4;
+		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
 		Ref<VertexArray> QuadVertexArray;
@@ -39,6 +39,8 @@ namespace Mango {
 		uint32_t TextureSlotIndex = 1;
 
 		glm::vec4 QuadVertexPositions[4];
+
+		Renderer2D::Statistics Stats;
 	} s_Data;
 
 	void Renderer2D::Init()
@@ -103,19 +105,13 @@ namespace Mango {
 
 		s_Data.UnlitShader->Bind();
 		s_Data.UnlitShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		s_Data.UnlitShader->SetInt("u_Textures", 0);
 		
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-		s_Data.TextureSlotIndex = 1;
+		Reset();
 	}
 
 	void Renderer2D::EndScene()
 	{
 		MGO_PROFILE_FUNCTION();
-
-		size_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		Flush();
 	}
@@ -123,6 +119,9 @@ namespace Mango {
 	void Renderer2D::Flush()
 	{
 		MGO_PROFILE_FUNCTION();
+		
+		size_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		for (uint32_t index = 0; index < s_Data.TextureSlotIndex; index++)
 		{
@@ -130,6 +129,20 @@ namespace Mango {
 		}
 
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+		s_Data.Stats.DrawCalls++;
+	}
+
+	void Renderer2D::Reset()
+	{
+		s_Data.QuadIndexCount = 0;
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		s_Data.TextureSlotIndex = 1;
+	}
+
+	void Renderer2D::FlushAndReset()
+	{
+		Flush();
+		Reset();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -193,12 +206,16 @@ namespace Mango {
 	{
 		MGO_PROFILE_FUNCTION();
 
+		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
+			FlushAndReset();
+
 		int32_t textureIndex = -1;
 		for (int32_t index = 0; index < static_cast<int32_t>(s_Data.TextureSlotIndex); index++)
 		{
 			if (*s_Data.TextureSlots[index].get() == *texture.get())
 			{
 				textureIndex = index;
+				break;
 			}
 		}
 
@@ -238,13 +255,16 @@ namespace Mango {
 
 		s_Data.QuadIndexCount += 6;
 
-		//s_Data.UnlitShader->SetFloat4("u_Color", tintColor);
-		//s_Data.UnlitShader->SetFloat4("u_Tiling", tilingAndOffsett);
-		//texture->Bind();
+		s_Data.Stats.QuadCount++;
+	}
 
-		//s_Data.UnlitShader->SetMat4("u_Model", transform);
-		//
-		//s_Data.QuadVertexArray->Bind();
-		//RenderCommand::DrawIndexed(s_Data.QuadVertexArray);
+	void Renderer2D::ResetStats()
+	{
+		memset(&s_Data.Stats, 0, sizeof(Renderer2D::Statistics));
+	}
+
+	Renderer2D::Statistics Renderer2D::GetStats()
+	{
+		return s_Data.Stats;
 	}
 }

@@ -9,7 +9,7 @@
 #include <chrono>
 
 Sandbox2D::Sandbox2D()
-	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f, true)
+	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f, true), m_ParticleSystem(1000000)
 {
 }
 
@@ -18,6 +18,15 @@ void Sandbox2D::OnAttach()
 	MGO_PROFILE_FUNCTION();
 
 	m_Texture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
+	
+	// Init here
+	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
+	m_Particle.ColorEnd = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
+	m_Particle.SizeBegin = 0.5f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 0.0f;
+	m_Particle.LifeTime = 5.0f;
+	m_Particle.Velocity = { 0.0f, 0.0f };
+	m_Particle.VelocityVariation = { 3.0f, 1.0f };
+	m_Particle.Position = { 0.0f, 0.0f };
 }
 
 void Sandbox2D::OnDettach()
@@ -69,6 +78,24 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 			}
 		}
 		Mango::Renderer2D::EndScene();
+
+		if (Mango::Input::IsMouseButtonPressed(MGO_MOUSE_BUTTON_LEFT))
+		{
+			auto [x, y] = Mango::Input::GetMousePosition();
+			auto width = Mango::Application::Get().GetWindow().GetWidth();
+			auto height = Mango::Application::Get().GetWindow().GetHeight();
+
+			auto bounds = m_CameraController.GetBounds();
+			auto pos = m_CameraController.GetCamera().GetPosition();
+			x = (x / width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
+			y = bounds.GetHeight() * 0.5f - (y / height) * bounds.GetHeight();
+			m_Particle.Position = { x + pos.x, y + pos.y };
+			for (int i = 0; i < 500; i++)
+				m_ParticleSystem.Emit(m_Particle);
+		}
+
+		m_ParticleSystem.OnUpdate(ts);
+		m_ParticleSystem.OnRender(m_CameraController.GetCamera());
 	}
 }
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "Mango.h"
 
+#include "ParticleSystem.h"
+
 class Sandbox2D : public Mango::Layer
 {
 public:
@@ -21,5 +23,8 @@ private:
 	Mango::Ref<Mango::Texture2D> m_Texture;
 
 	glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 0.8f };
+
+	ParticleProps m_Particle;
+	ParticleSystem m_ParticleSystem;
 };
 

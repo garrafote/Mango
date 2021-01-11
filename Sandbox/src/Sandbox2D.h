@@ -28,5 +28,8 @@ private:
 
 	ParticleProps m_Particle;
 	ParticleSystem m_ParticleSystem;
+
+	std::unordered_map<char, Mango::Ref<Mango::SubTexture2D>> m_TextureMap;
+	uint32_t m_MapWidth, m_MapHeight;
 };
 

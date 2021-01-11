@@ -64,15 +64,19 @@ namespace Mango {
 		dispatcher.Dispatch<WindowResizeEvent>(MGO_BIND_EVENT_FN(OrthographicCameraController::OnWindowResize));
 	}
 
+	void OrthographicCameraController::CalculateView()
+	{
+		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+	}
+
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		MGO_PROFILE_FUNCTION();
 
 		m_ZoomLevel -= e.GetYOffset() * 0.125f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.0125f);
-		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
-
+		CalculateView();
 		return false;
 	}
 	
@@ -81,9 +85,7 @@ namespace Mango {
 		MGO_PROFILE_FUNCTION();
 
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
-
+		CalculateView();
 		return false;
 	}
 }

@@ -8,6 +8,22 @@
 
 #include <chrono>
 
+
+static const uint32_t s_MapWidth = 24;
+static const char* s_MapTiles =
+"WWWWWWWWWWWWWWWWWWWWWWWW"
+"WWWWWDDDDDDDWDDDDDWWWWWW"
+"WWWDDDDDDDDDDDDDDDDWWWWW"
+"WWDDDWWDDDDDDDDDDDDDWWWW"
+"WWDDWWWWDDDDDDDDDDDDDWWW"
+"WWDDDDWDDDDDDDDDDDDDDDWW"
+"WWDDDDDDDDDDDDDDDDDDDDWW"
+"WWWDDDDDDDDDDDDDDDDDDWWW"
+"WWWDDDDDDDDDDDDDDDDWWWWW"
+"WWWWWDDDDDDDDDDDWWWWWWWW"
+"WWWWWWWWWWWWWWWWWWWWWWWW"
+;
+
 Sandbox2D::Sandbox2D()
 	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f, true), m_ParticleSystem(10000)
 {
@@ -22,6 +38,13 @@ void Sandbox2D::OnAttach()
 	m_StairsSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 7, 6 }, glm::vec2(128));
 	m_BarrelSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 8, 2 }, glm::vec2(128));
 	m_TreeSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 2, 1 }, glm::vec2(128), { 1, 2 });
+
+	m_MapWidth = s_MapWidth;
+	m_MapHeight = strlen(s_MapTiles) / m_MapWidth;
+
+	m_TextureMap['D'] = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 6, 11 }, glm::vec2(128));
+	m_TextureMap['W'] = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 11, 11 }, glm::vec2(128));
+
 	
 	// Init here
 	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
@@ -31,6 +54,8 @@ void Sandbox2D::OnAttach()
 	m_Particle.Velocity = { 0.0f, 0.0f };
 	m_Particle.VelocityVariation = { 3.0f, 1.0f };
 	m_Particle.Position = { 0.0f, 0.0f };
+
+	m_CameraController.SetZoomLevel(5);
 }
 
 void Sandbox2D::OnDettach()
@@ -85,9 +110,26 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 #endif
 
 		Mango::Renderer2D::BeginScene(m_CameraController.GetCamera());
-	
-		float tileOffsetX = 128.0f / (float)m_Spritesheet->GetWidth();
-		float tileOffsetY = 128.0f / (float)m_Spritesheet->GetHeight();
+
+		for (uint32_t y = 0; y < m_MapHeight; y++)
+		{
+			for (uint32_t x = 0; x < m_MapWidth; x++)
+			{
+				char tileType = s_MapTiles[x + y * m_MapWidth];
+				Mango::Ref<Mango::SubTexture2D> texture;
+
+				if (m_TextureMap.find(tileType) != m_TextureMap.end())
+				{
+					texture = m_TextureMap[tileType];
+				}
+				else
+				{
+					texture = m_BarrelSprite;
+				}
+				Mango::Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, m_MapHeight / 2.0f - y }, { 1.0f, 1.0f }, texture);
+			}
+		}
+
 		Mango::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.3f }, { 1.0f, 1.0f }, m_StairsSprite);
 		Mango::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.3f }, { 1.0f, 1.0f }, m_BarrelSprite);
 		Mango::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.3f }, { 1.0f, 2.0f }, m_TreeSprite);

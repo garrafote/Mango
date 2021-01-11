@@ -97,6 +97,8 @@ namespace Mango {
 	void Renderer2D::Shutdown()
 	{
 		MGO_PROFILE_FUNCTION();
+
+		delete[] s_Data.QuadVertexBufferBase;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)

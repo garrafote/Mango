@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mango/Core/Core.h"
+#include "Mango/Core/Base.h"
 #include <string>
 
 #include <glm/glm.hpp>

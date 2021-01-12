@@ -2,7 +2,7 @@
 
 #include "MangoPCH.h"
 
-#include "Mango/Core/Core.h"
+#include "Mango/Core/Base.h"
 #include "Mango/Events/Event.h"
 
 namespace Mango {

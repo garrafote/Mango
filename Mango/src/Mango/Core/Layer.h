@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mango/Core/Core.h"
+#include "Mango/Core/Base.h"
 #include "Mango/Core/Timestep.h"
 #include "Mango/Events/Event.h"
 

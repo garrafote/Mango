@@ -1,5 +1,5 @@
 #pragma once
-#include "Mango/Core/Core.h"
+#include "Mango/Core/Base.h"
 
 #ifdef MANGO_PLATFORM_WINDOWS
 

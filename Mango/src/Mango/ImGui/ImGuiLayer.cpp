@@ -65,15 +65,14 @@ namespace Mango {
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
-
-	void ImGuiLayer::OnImGuiRender()
+	
+	void ImGuiLayer::OnEvent(Event& e)
 	{
-		MGO_PROFILE_FUNCTION();
-
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		ImGuiIO& io = ImGui::GetIO();
+		e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+		e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
 	}
-
+	
 	void ImGuiLayer::Begin()
 	{
 		MGO_PROFILE_FUNCTION();

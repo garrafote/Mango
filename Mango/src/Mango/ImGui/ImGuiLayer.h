@@ -15,7 +15,7 @@ namespace Mango {
 
 		virtual void OnAttach() override;
 		virtual void OnDettach() override;
-		virtual void OnImGuiRender() override;
+		virtual void OnEvent(Event& event) override;
 
 		void Begin();
 		void End();

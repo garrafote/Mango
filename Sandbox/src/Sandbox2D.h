@@ -20,6 +20,8 @@ private:
 
 	Mango::OrthographicCameraController m_CameraController;
 
+	Mango::Ref<Mango::Framebuffer> m_Framebuffer;
+
 	Mango::Ref<Mango::Texture2D> m_CheckerboardTexture;
 	Mango::Ref<Mango::Texture2D> m_Spritesheet;
 	Mango::Ref<Mango::SubTexture2D> m_BarrelSprite, m_StairsSprite, m_TreeSprite;

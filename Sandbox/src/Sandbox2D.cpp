@@ -33,6 +33,11 @@ void Sandbox2D::OnAttach()
 {
 	MGO_PROFILE_FUNCTION();
 
+	Mango::FramebufferSpecification fbspec;
+	fbspec.Width = 1280;
+	fbspec.Height = 720;
+	m_Framebuffer = Mango::Framebuffer::Create(fbspec);
+
 	m_CheckerboardTexture = Mango::Texture2D::Create("assets/textures/Checkerboard.png");
 	m_Spritesheet = Mango::Texture2D::Create("assets/game/textures/RPGpack_sheet_2X.png");
 	m_StairsSprite = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 7, 6 }, glm::vec2(128));
@@ -44,7 +49,6 @@ void Sandbox2D::OnAttach()
 
 	m_TextureMap['D'] = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 6, 11 }, glm::vec2(128));
 	m_TextureMap['W'] = Mango::SubTexture2D::CreateFromCoords(m_Spritesheet, { 11, 11 }, glm::vec2(128));
-
 	
 	// Init here
 	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
@@ -78,6 +82,8 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 	{
 		MGO_PROFILE_SCOPE("Renderer Prep");
 		Mango::Renderer2D::ResetStats();
+		
+		m_Framebuffer->Bind();
 		Mango::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		Mango::RenderCommand::Clear();
 	}
@@ -153,6 +159,8 @@ void Sandbox2D::OnUpdate(Mango::Timestep ts)
 
 		m_ParticleSystem.OnUpdate(ts);
 		m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+
+		m_Framebuffer->Unbind();
 	}
 }
 
@@ -245,8 +253,8 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("	Indices:  %d", stats.GetTotalIndexCount());
 	
 	ImGui::Text("Scene Properties:");
-	uint32_t textureID = m_CheckerboardTexture->GetRendererID();
-	ImGui::Image((void*)textureID, ImVec2{ 256.0f, 256.0f });
+	uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
+	ImGui::Image((void*)textureID, ImVec2{ 1280.0f, 720.0f });
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 	ImGui::End();
 

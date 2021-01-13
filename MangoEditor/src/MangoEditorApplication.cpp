@@ -3,22 +3,25 @@
 
 #include "EditorLayer.h"
 
-class MangoEditor : public Mango::Application
-{
-public:
-	MangoEditor()
-		: Application("Mango Editor")
+namespace Mango {
+
+	class MangoEditor : public Mango::Application
 	{
-		PushLayer(new EditorLayer());
-	}
+	public:
+		MangoEditor()
+			: Application("Mango Editor")
+		{
+			PushLayer(new EditorLayer());
+		}
 
-	~MangoEditor()
+		~MangoEditor()
+		{
+
+		}
+	};
+
+	Mango::Application* Mango::CreateApplication()
 	{
-
+		return new MangoEditor();
 	}
-};
-
-Mango::Application* Mango::CreateApplication()
-{
-	return new MangoEditor();
 }

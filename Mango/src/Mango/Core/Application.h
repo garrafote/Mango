@@ -18,7 +18,7 @@ namespace Mango {
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Mango Application");
 		virtual ~Application();
 
 		void OnEvent(Event& e);

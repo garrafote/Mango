@@ -1,12 +1,17 @@
 workspace "Mango"
 	architecture "x86_64"
-	startproject "Sandbox"
+	startproject "MangoEditor"
 
 	configurations
 	{
 		"Debug",
 		"Release",
 		"Dist"
+	}
+
+	flags
+	{
+		"MultiProcessorCompile"
 	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -51,7 +56,8 @@ project "Mango"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
 	}
 
 	includedirs
@@ -78,7 +84,6 @@ project "Mango"
 
 		defines
 		{
-			"GLFW_INCLUDE_NONE"
 		}
 
 	filter "configurations:Debug"
@@ -143,3 +148,49 @@ project "Sandbox"
 		runtime "Release"
 		optimize "on"
 
+project "MangoEditor"
+	location "MangoEditor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("intermediate/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"Mango/vendor/spdlog/include",
+		"Mango/vendor",
+		"Mango/src",
+		"%{IncludeDir.glm}"
+	}
+
+	links
+	{
+		"Mango"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		defines "MANGO_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "MANGO_RELEASE"
+		runtime "Release"
+		optimize "on"
+	
+	filter "configurations:Dist"
+		defines "MANGO_DIST"
+		runtime "Release"
+		optimize "on"

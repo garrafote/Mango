@@ -11,9 +11,13 @@ intermediate/
 
 # ImGui
 Sandbox/imgui.ini
+MangoEditor/imgui.ini
+
 
 # Profiling 
 Sandbox/MangoProfile*.json
+MangoEditor/MangoProfile*.json
 
 # Logging
 Sandbox/Mango.log
+MangoEditor/Mango.log

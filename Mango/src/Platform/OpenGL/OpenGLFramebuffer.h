@@ -4,6 +4,7 @@
 
 namespace Mango
 {
+
 	class OpenGLFramebuffer : public Framebuffer
 	{
 	public:

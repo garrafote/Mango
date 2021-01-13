@@ -160,9 +160,9 @@ void EditorLayer::OnImGuiRender()
 
         ImGui::EndMenuBar();
     }
-
     ImGui::End();
-	ImGui::Begin("Stats");
+	
+    ImGui::Begin("Stats");
 	auto stats = Mango::Renderer2D::GetStats();
 	ImGui::Text("Renderer2D Stats:");
 	ImGui::Text("	Draw Calls:  %d", stats.DrawCalls);
@@ -172,10 +172,21 @@ void EditorLayer::OnImGuiRender()
 	
 	ImGui::Text("Scene Properties:");
 	uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
-    ImGui::Image((void*)textureID, ImVec2{ 1280.0f, 720.0f }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 	ImGui::End();
-
+   
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+	ImGui::Begin("Viewport");
+    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+    if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
+    {
+        m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, viewportPanelSize.y);
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+        m_CameraController.OnResize(viewportPanelSize.x, m_ViewportSize.y);
+    }
+    ImGui::Image((void*)textureID, viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+	ImGui::End();
+    ImGui::PopStyleVar();
 }
 
 void EditorLayer::OnEvent(Mango::Event& e)

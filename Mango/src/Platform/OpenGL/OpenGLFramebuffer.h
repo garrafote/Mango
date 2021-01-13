@@ -14,6 +14,8 @@ namespace Mango
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
+		
+		virtual void Resize(uint32_t width, uint32_t height) override;
 
 		virtual uint32_t GetColorAttachmentID() const override { return m_ColorAttachment; }
 

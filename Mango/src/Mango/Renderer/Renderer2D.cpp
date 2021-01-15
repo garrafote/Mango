@@ -231,6 +231,11 @@ namespace Mango {
 		DrawQuad(transform, subtexture->GetTexture(), glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), tintColor, subtexture->GetTexCoords());
 	}
 
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	{
+		DrawQuad(transform, s_Data.WhiteTexture, glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), color);
+	}
+
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffsett, const glm::vec4& tintColor, const glm::vec2* quadTexCoords)
 	{
 		MGO_PROFILE_FUNCTION();

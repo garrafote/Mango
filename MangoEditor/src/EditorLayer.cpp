@@ -16,15 +16,19 @@ namespace Mango {
     void EditorLayer::OnAttach()
     {
         MGO_PROFILE_FUNCTION();
+        
+        m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
         FramebufferSpecification fbspec;
         fbspec.Width = 1280;
         fbspec.Height = 720;
         m_Framebuffer = Framebuffer::Create(fbspec);
 
-        m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
-
-        m_CameraController.SetZoomLevel(5);
+        m_ActiveScene = CreateRef<Scene>();
+        entt::entity entity = m_ActiveScene->CreateEntity();
+        m_ActiveScene->Reg().emplace<TransformComponent>(entity);
+        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(entity, glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+        m_SquareEntity = entity;
     }
 
     void EditorLayer::OnDettach()
@@ -35,62 +39,35 @@ namespace Mango {
 
     void EditorLayer::OnUpdate(Timestep ts)
     {
-        MGO_PROFILE_FUNCTION();
+		MGO_PROFILE_FUNCTION();
 
-        // Update
-        {
-            MGO_PROFILE_SCOPE("Camera Controller Update");
-            FramebufferSpecification spec = m_Framebuffer->GetSpecification();
-            if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
-                (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
-            {
-                m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-                m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-            }
+		// Update
+		FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f &&
+			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+		}
+
+		if (m_ViewportFocused)
+			m_CameraController.OnUpdate(ts);
+
+		Renderer2D::ResetStats();
+
+		m_Framebuffer->Bind();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+		RenderCommand::Clear();
 
 
-            if (m_ViewportFocused)
-                m_CameraController.OnUpdate(ts);
-        }
+		Renderer2D::BeginScene(m_CameraController.GetCamera());
+	
+        // Update Scene
+        m_ActiveScene->OnUpdate(ts);
 
-        // Render Prep
-        {
-            MGO_PROFILE_SCOPE("Renderer Prep");
-            Renderer2D::ResetStats();
+		Renderer2D::EndScene();
 
-            m_Framebuffer->Bind();
-            RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-            RenderCommand::Clear();
-        }
-
-        // Render Draw
-        {
-            MGO_PROFILE_SCOPE("Renderer Draw");
-
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-            Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.3f, 0.2f, 0.8f, 1.0f });
-            Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckerboardTexture, { 10.0f, 10.0f });
-
-            static float rotation = 0;
-            rotation += ts.GetSeconds() * 10;
-            Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.1f }, { 0.8f, 0.8f }, glm::radians(rotation), m_CheckerboardTexture, { 1.0f, 1.0f }, { 0.0f, 0.0f }, m_SquareColor);
-
-            Renderer2D::EndScene();
-
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-            for (float y = -5.0f; y < 5.0f; y += 0.5f)
-            {
-                for (float x = -5.0f; x < 5.0f; x += 0.5f)
-                {
-                    glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-                    Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-                }
-            }
-            Renderer2D::EndScene();
-
-            m_Framebuffer->Unbind();
-        }
+		m_Framebuffer->Unbind();
     }
 
     void EditorLayer::OnImGuiRender()
@@ -182,8 +159,9 @@ namespace Mango {
         ImGui::Text("	Indices:  %d", stats.GetTotalIndexCount());
 
         ImGui::Text("Scene Properties:");
-        uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
+        auto& spriteColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
+        ImGui::ColorEdit4("Square Color", glm::value_ptr(spriteColor));
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -194,6 +172,7 @@ namespace Mango {
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+        uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
         ImGui::Image((void*)textureID, viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
         ImGui::End();
         ImGui::PopStyleVar();

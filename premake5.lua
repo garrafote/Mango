@@ -23,6 +23,7 @@ IncludeDir["Glad"] = "Mango/vendor/Glad/include"
 IncludeDir["ImGui"] = "Mango/vendor/imgui"
 IncludeDir["glm"] = "Mango/vendor/glm"
 IncludeDir["stb_image"] = "Mango/vendor/stb_image"
+IncludeDir["entt"] = "Mango/vendor/entt/include"
 
 group "Dependencies"
 	include "Mango/vendor/GLFW"
@@ -67,8 +68,9 @@ project "Mango"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -169,7 +171,8 @@ project "MangoEditor"
 		"Mango/vendor/spdlog/include",
 		"Mango/vendor",
 		"Mango/src",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links

@@ -23,7 +23,7 @@ namespace Mango {
 		Mango::Ref<Mango::Framebuffer> m_Framebuffer;
 
 		Ref<Scene> m_ActiveScene;
-		entt::entity m_SquareEntity;
+		Entity m_SquareEntity;
 
 		Mango::Ref<Mango::Texture2D> m_CheckerboardTexture;
 

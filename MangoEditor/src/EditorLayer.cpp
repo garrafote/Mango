@@ -25,10 +25,11 @@ namespace Mango {
         m_Framebuffer = Framebuffer::Create(fbspec);
 
         m_ActiveScene = CreateRef<Scene>();
-        entt::entity entity = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().emplace<TransformComponent>(entity);
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(entity, glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-        m_SquareEntity = entity;
+
+        // Entity
+        auto square = m_ActiveScene->CreateEntity("Square");
+        square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+        m_SquareEntity = square;
     }
 
     void EditorLayer::OnDettach()
@@ -160,8 +161,16 @@ namespace Mango {
 
         ImGui::Text("Scene Properties:");
 
-        auto& spriteColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SquareEntity).Color;
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(spriteColor));
+        if (m_SquareEntity)
+        {
+
+            ImGui::Separator();
+            auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+            ImGui::Text("%s", tag.c_str());
+
+			auto& spriteColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(spriteColor));
+        }
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });

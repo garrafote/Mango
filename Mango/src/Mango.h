@@ -16,6 +16,7 @@
 #include "Mango/ImGui/ImGuiLayer.h"
 
 #include "Mango/Scene/Scene.h"
+#include "Mango/Scene/Entity.h"
 #include "Mango/Scene/Components.h"
 
 // ------ Renderer  -----------

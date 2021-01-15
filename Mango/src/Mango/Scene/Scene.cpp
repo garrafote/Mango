@@ -1,6 +1,8 @@
 #include "MangoPCH.h"
 #include "Scene.h"
 
+#include "Mango/Scene/Entity.h"
+
 #include "Mango/Scene/Components.h"
 #include "Mango/Renderer/Renderer2D.h"
 
@@ -53,9 +55,13 @@ namespace Mango {
 	{
 	}
 
-	entt::entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const std::string& name)
 	{
-		return m_Registry.create();
+		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<TransformComponent>();
+		auto& tag = entity.AddComponent<TagComponent>();
+		tag = name.empty() ? "Entity" : name;
+		return entity;
 	}
 
 	void Scene::OnUpdate(Timestep ts)

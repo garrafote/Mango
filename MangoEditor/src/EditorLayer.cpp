@@ -30,6 +30,29 @@ namespace Mango {
         auto square = m_ActiveScene->CreateEntity("Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
         m_SquareEntity = square;
+
+
+			auto group = m_ActiveScene->Reg().group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+                MGO_CORE_INFO("ok");
+			}
+
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+		
+        {
+
+        auto group = m_ActiveScene->Reg().group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+                MGO_CORE_INFO("ok");
+			}
+        }
     }
 
     void EditorLayer::OnDettach()
@@ -60,13 +83,8 @@ namespace Mango {
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
-
-		Renderer2D::BeginScene(m_CameraController.GetCamera());
-	
         // Update Scene
         m_ActiveScene->OnUpdate(ts);
-
-		Renderer2D::EndScene();
 
 		m_Framebuffer->Unbind();
     }

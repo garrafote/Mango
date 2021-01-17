@@ -1,6 +1,8 @@
 #pragma once
 
-#include<glm/glm.hpp>
+#include "Mango/Renderer/Camera.h"
+
+#include <glm/glm.hpp>
 
 namespace Mango {
 
@@ -17,6 +19,7 @@ namespace Mango {
 	struct TransformComponent
 	{
 		glm::mat4 Transform{ 1.0f };
+
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::mat4& transform)
@@ -34,7 +37,17 @@ namespace Mango {
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
 
+	struct CameraComponent
+	{
+		Mango::Camera Camera;
+		bool Primary = true; // TODO: think about moving to scene
+		
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const glm::mat4& projection)
+			: Camera(projection) {}
 	};
 
 

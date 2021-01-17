@@ -24,6 +24,7 @@ namespace Mango {
 
 		Ref<Scene> m_ActiveScene;
 		Entity m_SquareEntity;
+		Entity m_CameraEntity;
 
 		Mango::Ref<Mango::Texture2D> m_CheckerboardTexture;
 

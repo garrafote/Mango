@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Mango/Renderer/Camera.h"
 #include "Mango/Renderer/OrthographicCamera.h"
 
 #include "Mango/Renderer/Texture.h"
@@ -14,6 +15,7 @@ namespace Mango {
 		static void Shutdown();
 
 		static void BeginScene(const OrthographicCamera& camera);
+		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void EndScene();
 		static void Flush();
 

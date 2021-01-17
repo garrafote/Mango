@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Mango/Renderer/Camera.h"
+#include "Mango/Scene/SceneCamera.h"
 
 #include <glm/glm.hpp>
 
@@ -41,13 +41,12 @@ namespace Mango {
 
 	struct CameraComponent
 	{
-		Mango::Camera Camera;
+		SceneCamera Camera;
 		bool Primary = true; // TODO: think about moving to scene
+		bool FixedAspectRatio = false; 
 		
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Camera(projection) {}
 	};
 
 

@@ -31,28 +31,8 @@ namespace Mango {
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
         m_SquareEntity = square;
 
-
-			auto group = m_ActiveScene->Reg().group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-                MGO_CORE_INFO("ok");
-			}
-
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
-		
-        {
-
-        auto group = m_ActiveScene->Reg().group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-                MGO_CORE_INFO("ok");
-			}
-        }
+        m_CameraEntity.AddComponent<CameraComponent>();
     }
 
     void EditorLayer::OnDettach()
@@ -72,6 +52,8 @@ namespace Mango {
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
 		if (m_ViewportFocused)
@@ -188,6 +170,11 @@ namespace Mango {
 
 			auto& spriteColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
 			ImGui::ColorEdit4("Square Color", glm::value_ptr(spriteColor));
+           
+            auto& camera = m_CameraEntity.GetComponent<CameraComponent>().Camera;
+            float orthoSize = camera.GetOrthographicSize();
+            if (ImGui::DragFloat("Camera Size", &orthoSize,  0.1f, 0.1f, 100.0f, "%.1f"))
+                camera.SetOrthographicSize(orthoSize);
         }
         ImGui::End();
 

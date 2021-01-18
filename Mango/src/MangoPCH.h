@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Mango/Core/Base.h"
+
 #include "Mango/Core/Log.h"
 
 #include "Mango/Debug/Instrumentor.h"

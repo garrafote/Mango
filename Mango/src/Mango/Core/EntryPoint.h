@@ -1,6 +1,8 @@
 #pragma once
 #include "Mango/Core/Base.h"
 
+#include "Mango/Debug/Instrumentor.h"
+
 #ifdef MANGO_PLATFORM_WINDOWS
 
 extern Mango::Application* Mango::CreateApplication();

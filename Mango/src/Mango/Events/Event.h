@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MangoPCH.h"
+#include <functional>
 
 #include "Mango/Core/Base.h"
 

@@ -38,7 +38,7 @@ namespace Mango {
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1;
 
-		glm::vec4 QuadVertexPositions[4];
+		glm::vec4 QuadVertexPositions[4] = {};
 
 		Renderer2D::Statistics Stats;
 	} s_Data;
@@ -258,7 +258,7 @@ namespace Mango {
 		int32_t textureIndex = -1;
 		for (int32_t index = 0; index < static_cast<int32_t>(s_Data.TextureSlotIndex); index++)
 		{
-			if (*s_Data.TextureSlots[index].get() == *texture.get())
+			if (*s_Data.TextureSlots[index] == *texture)
 			{
 				textureIndex = index;
 				break;

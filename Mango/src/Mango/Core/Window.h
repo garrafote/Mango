@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MangoPCH.h"
+#include <sstream>
 
 #include "Mango/Core/Base.h"
 #include "Mango/Events/Event.h"

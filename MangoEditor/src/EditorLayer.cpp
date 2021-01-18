@@ -1,5 +1,8 @@
 #include "EditorLayer.h"
 
+#include "Mango/Debug/Instrumentor.h"
+#include <iostream>
+
 #include <imgui/imgui.h>
 
 #include <glm/gtc/matrix_transform.hpp>

@@ -17,6 +17,7 @@
 
 #include "Mango/Scene/Scene.h"
 #include "Mango/Scene/Entity.h"
+#include "Mango/Scene/ScriptableEntity.h"
 #include "Mango/Scene/Components.h"
 
 // ------ Renderer  -----------

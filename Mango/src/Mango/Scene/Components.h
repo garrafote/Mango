@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Mango/Scene/SceneCamera.h"
+#include "Mango/Scene/ScriptableEntity.h"
 
 #include <glm/glm.hpp>
 
@@ -49,5 +50,18 @@ namespace Mango {
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* Instance = nullptr;
 
+		ScriptableEntity*(*InstantiateScript)();
+		void(*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind()
+		{
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+		}
+	};
 }

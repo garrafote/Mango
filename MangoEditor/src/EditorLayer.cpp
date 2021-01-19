@@ -71,6 +71,8 @@ namespace Mango {
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDettach()
@@ -188,6 +190,8 @@ namespace Mango {
             ImGui::EndMenuBar();
         }
         ImGui::End();
+
+        m_SceneHierarchyPanel.OnImGuiRender();
 
         ImGui::Begin("Stats");
         auto stats = Renderer2D::GetStats();

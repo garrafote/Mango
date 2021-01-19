@@ -30,26 +30,24 @@ namespace Mango {
         m_ActiveScene = CreateRef<Scene>();
 
         // Entity
-        auto square = m_ActiveScene->CreateEntity("Square");
-        square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-        m_SquareEntity = square;
+        auto redSquare = m_ActiveScene->CreateEntity("Green Square");
+        redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+        redSquare.GetComponent<TransformComponent>().Transform[3][0] = 2.0f;
+        redSquare.GetComponent<TransformComponent>().Transform[3][2] = 1.0f;
+        
+        auto greenSquare = m_ActiveScene->CreateEntity("Red Square");
+        greenSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+        m_SquareEntity = greenSquare;
 
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera");
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
         m_CameraEntity.AddComponent<CameraComponent>();
+        
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera B");
+        m_CameraEntity.AddComponent<CameraComponent>().Primary == false;
 
         class CameraController : public ScriptableEntity
         {
         public:
-            void OnCreate()
-            {
-                std::cout << "OnCreate" << std::endl;
-            }
-
-            void OnDestroy()
-            {
-
-            }
-
             void OnUpdate(Timestep ts)
             {
                 auto& transform = GetComponent<TransformComponent>().Transform;
@@ -63,10 +61,6 @@ namespace Mango {
                     transform[3][1] -= speed * ts;
                 if (Input::IsKeyPressed(KeyCode::S))
                     transform[3][1] += speed * ts;
-
-
-
-                std::cout << "Timestep: " << ts << std::endl;
             }
         };
 
@@ -200,24 +194,6 @@ namespace Mango {
         ImGui::Text("	Quads:  %d", stats.QuadCount);
         ImGui::Text("	Vertices:  %d", stats.GetTotalVertexCount());
         ImGui::Text("	Indices:  %d", stats.GetTotalIndexCount());
-
-        ImGui::Text("Scene Properties:");
-
-        if (m_SquareEntity)
-        {
-
-            ImGui::Separator();
-            auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-            ImGui::Text("%s", tag.c_str());
-
-			auto& spriteColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(spriteColor));
-           
-            auto& camera = m_CameraEntity.GetComponent<CameraComponent>().Camera;
-            float orthoSize = camera.GetOrthographicSize();
-            if (ImGui::DragFloat("Camera Size", &orthoSize,  0.1f, 0.1f, 100.0f, "%.1f"))
-                camera.SetOrthographicSize(orthoSize);
-        }
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });

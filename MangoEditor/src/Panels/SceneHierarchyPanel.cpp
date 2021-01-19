@@ -63,6 +63,7 @@ namespace Mango {
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
+		// Tag Component
 		if (entity.HasComponent<TagComponent>())
 		{
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
@@ -75,23 +76,15 @@ namespace Mango {
 			}
 		}
 		
-		if (entity.HasComponent<TransformComponent>() && 
-			ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
-		{
-
-			auto& transform = entity.GetComponent<TransformComponent>().Transform;
-			
+		DrawComponent<TransformComponent>(entity, "Transform", [](auto& component) {
+			auto& transform = component.Transform;
 			ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
-			ImGui::TreePop();
-		}
-		
-		if (entity.HasComponent<CameraComponent>() && 
-			ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
-		{
-			auto& cameraComponent = entity.GetComponent<CameraComponent>();
-			auto& camera = cameraComponent.Camera;
+		});
 
-			const char* projectionTypeStrings[] = {"Perspective", "Orthographic"};
+		DrawComponent<CameraComponent>(entity, "Camera", [](auto& component) {
+			auto& camera = component.Camera;
+
+			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
 			const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
 
 			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
@@ -112,7 +105,7 @@ namespace Mango {
 				ImGui::EndCombo();
 			}
 
-			if (cameraComponent.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
 				float fov = glm::degrees(camera.GetPersectiveVerticalFOV());
 				if (ImGui::DragFloat("Vertical FOV", &fov))
@@ -121,13 +114,13 @@ namespace Mango {
 				float orthoNear = camera.GetPerspectiveNearClip();
 				if (ImGui::DragFloat("Near", &orthoNear))
 					camera.SetPerspectiveNearClip(orthoNear);
-				
+
 				float orthoFar = camera.GetPerspectiveFarClip();
 				if (ImGui::DragFloat("Far", &orthoFar))
 					camera.SetPerspectiveFarClip(orthoFar);
 			}
 
-			if (cameraComponent.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 			{
 				float size = camera.GetOrthographicSize();
 				if (ImGui::DragFloat("Size", &size))
@@ -136,16 +129,16 @@ namespace Mango {
 				float perspectiveNear = camera.GetOrthographicNearClip();
 				if (ImGui::DragFloat("Near", &perspectiveNear))
 					camera.SetOrthographicNearClip(perspectiveNear);
-				
+
 				float perspectiveFar = camera.GetOrthographicFarClip();
 				if (ImGui::DragFloat("Far", &perspectiveFar))
 					camera.SetOrthographicFarClip(perspectiveFar);
 			}
+		});
 
-			ImGui::TreePop();
-		}
-
-
-
+		
+		DrawComponent<SpriteRendererComponent>(entity, "Sprite Renderer", [](auto& component) {
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+		});
 	}
 }

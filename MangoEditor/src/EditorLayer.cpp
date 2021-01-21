@@ -32,8 +32,7 @@ namespace Mango {
         // Entity
         auto redSquare = m_ActiveScene->CreateEntity("Green Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-        redSquare.GetComponent<TransformComponent>().Transform[3][0] = 2.0f;
-        redSquare.GetComponent<TransformComponent>().Transform[3][2] = 1.0f;
+        redSquare.GetComponent<TransformComponent>().Translation = { 2.0f, 0.0f, 1.0f };
         
         auto greenSquare = m_ActiveScene->CreateEntity("Red Square");
         greenSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
@@ -50,17 +49,17 @@ namespace Mango {
         public:
             void OnUpdate(Timestep ts)
             {
-                auto& transform = GetComponent<TransformComponent>().Transform;
+                auto& translation = GetComponent<TransformComponent>().Translation;
                 float speed = 5.0f;
 
                 if (Input::IsKeyPressed(KeyCode::A))
-                    transform[3][0] -= speed * ts;
+                    translation.x -= speed * ts;
                 if (Input::IsKeyPressed(KeyCode::D))
-                    transform[3][0] += speed * ts;
+                    translation.x += speed * ts;
                 if (Input::IsKeyPressed(KeyCode::W))
-                    transform[3][1] -= speed * ts;
+                    translation.y -= speed * ts;
                 if (Input::IsKeyPressed(KeyCode::S))
-                    transform[3][1] += speed * ts;
+                    translation.y += speed * ts;
             }
         };
 

@@ -3,6 +3,7 @@
 #include "Mango/Scene/Components.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -61,6 +62,73 @@ namespace Mango {
 		}
 	}
 
+	static bool DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.f)
+	{
+		bool valueChanged = false;
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+		
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
+		if (ImGui::Button("X", buttonSize))
+		{
+			valueChanged = true;
+			values.x = resetValue;
+		}
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		valueChanged |= ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.3f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
+		if (ImGui::Button("Y", buttonSize))
+		{
+			valueChanged = true;
+			values.y = resetValue;
+		}
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		valueChanged |= ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.35f, 0.9f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
+		if (ImGui::Button("Z", buttonSize))
+		{
+			valueChanged = true;
+			values.z = resetValue;
+		}
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		valueChanged |= ImGui::DragFloat("##Z", &values.z, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::PopItemWidth();
+
+		ImGui::PopStyleVar();
+		ImGui::Columns(1);
+
+		ImGui::PopID();
+		return valueChanged;
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		// Tag Component
@@ -77,8 +145,13 @@ namespace Mango {
 		}
 		
 		DrawComponent<TransformComponent>(entity, "Transform", [](auto& component) {
-			auto& transform = component.Transform;
-			ImGui::DragFloat3("Position", glm::value_ptr(transform[3]), 0.1f);
+			DrawVec3Control("Translation", component.Translation);
+
+			glm::vec3 rotation = glm::degrees(component.Rotation);
+			if (DrawVec3Control("Rotation", rotation))
+				component.Rotation = glm::radians(rotation);
+
+			DrawVec3Control("Scale", component.Scale, 1.0f);
 		});
 
 		DrawComponent<CameraComponent>(entity, "Camera", [](auto& component) {

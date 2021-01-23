@@ -49,26 +49,6 @@ namespace Mango {
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
-
-			if (ImGui::Button("Add Component"))
-				ImGui::OpenPopup("AddComponent");
-
-			if (ImGui::BeginPopup("AddComponent"))
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.AddComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-				
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-
-				ImGui::EndPopup();
-			}
 		}
 
 		ImGui::End();
@@ -77,6 +57,8 @@ namespace Mango {
 	{
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 		ImGuiBackendFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+
 		if (m_SelectionContext == entity) flags |= ImGuiTreeNodeFlags_Selected;
 		bool expanded = ImGui::TreeNodeEx((void*)(uint32_t)entity, flags, tag.c_str());
 
@@ -110,6 +92,9 @@ namespace Mango {
 
 	static bool DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.f)
 	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0];
+
 		bool valueChanged = false;
 		ImGui::PushID(label.c_str());
 
@@ -127,11 +112,13 @@ namespace Mango {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.9f, 0.2f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.1f, 0.15f, 1.0f));
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("X", buttonSize))
 		{
 			valueChanged = true;
 			values.x = resetValue;
 		}
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -142,11 +129,13 @@ namespace Mango {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.3f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.2f, 0.7f, 0.2f, 1.0f));
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Y", buttonSize))
 		{
 			valueChanged = true;
 			values.y = resetValue;
 		}
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -157,11 +146,13 @@ namespace Mango {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.35f, 0.9f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.25f, 0.8f, 1.0f));
+		ImGui::PushFont(boldFont);
 		if (ImGui::Button("Z", buttonSize))
 		{
 			valueChanged = true;
 			values.z = resetValue;
 		}
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -174,6 +165,52 @@ namespace Mango {
 		ImGui::PopID();
 		return valueChanged;
 	}
+	
+	template<typename T, typename DrawFunction>
+	void DrawComponent(const std::string& name, Entity entity, DrawFunction drawFunction, bool displayRemoveButton = true)
+	{
+		const ImGuiTreeNodeFlags flags = 
+			ImGuiTreeNodeFlags_DefaultOpen 
+			| ImGuiTreeNodeFlags_AllowItemOverlap
+			| ImGuiTreeNodeFlags_Framed
+			| ImGuiTreeNodeFlags_FramePadding
+			| ImGuiTreeNodeFlags_SpanAvailWidth;
+
+		if (entity.HasComponent<T>())
+		{
+			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+			ImGui::Separator();
+			bool open =	ImGui::TreeNodeEx((void*)typeid(T).hash_code(), flags, name.c_str());
+			ImGui::PopStyleVar();
+			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
+			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight }))
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+
+			bool componentRemoved = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (displayRemoveButton && ImGui::MenuItem("Remove Component"))
+					componentRemoved = true;
+
+				ImGui::EndPopup();
+			}
+
+			if (open)
+			{
+				auto& component = entity.GetComponent<T>();
+				drawFunction(component);
+				ImGui::TreePop();
+			}
+
+			if (componentRemoved)
+				entity.RemoveComponent<T>();
+		}
+	}
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
@@ -184,13 +221,38 @@ namespace Mango {
 
 			char buffer[64];
 			strcpy_s(buffer, sizeof(buffer), tag.c_str());
-			if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
+			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
 			}
+
+			ImGui::SameLine();
+			ImGui::PushItemWidth(-1);
+
+			if (ImGui::Button("Add Component"))
+				ImGui::OpenPopup("AddComponent");
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::PopItemWidth();
 		}
 		
-		DrawComponent<TransformComponent>(entity, "Transform", [](auto& component) {
+		DrawComponent<TransformComponent>("Transform", entity, [](auto& component) {
 			DrawVec3Control("Translation", component.Translation);
 
 			glm::vec3 rotation = glm::degrees(component.Rotation);
@@ -200,7 +262,7 @@ namespace Mango {
 			DrawVec3Control("Scale", component.Scale, 1.0f);
 		}, false);
 
-		DrawComponent<CameraComponent>(entity, "Camera", [](auto& component) {
+		DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
 			auto& camera = component.Camera;
 
 			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
@@ -256,7 +318,7 @@ namespace Mango {
 		});
 
 		
-		DrawComponent<SpriteRendererComponent>(entity, "Sprite Renderer", [](auto& component) {
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component) {
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 		});
 	}

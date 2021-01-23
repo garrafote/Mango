@@ -21,16 +21,41 @@ namespace Mango {
 		void DrawComponents(Entity entity);
 
 		template<typename T>
-		void DrawComponent(Entity entity, const char* name, const std::function<void (T&)>& drawFunction)
+		void DrawComponent(Entity entity, const char* name, const std::function<void (T&)>& drawFunction, bool displayRemoveButton = true)
 		{
-			if (entity.HasComponent<T>() &&
-				ImGui::TreeNodeEx((void*)typeid(T).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, name))
+			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+
+			if (entity.HasComponent<T>())
 			{
-				auto& component = entity.GetComponent<T>();
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+				bool open =	ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name);
+				ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+				if (ImGui::Button("+", ImVec2{ 20, 20 }))
+				{
+					ImGui::OpenPopup("ComponentSettings");
+				}
+				ImGui::PopStyleVar();
 
-				drawFunction(component);
+				bool componentRemoved = false;
+				if (ImGui::BeginPopup("ComponentSettings"))
+				{
+					if (displayRemoveButton && ImGui::MenuItem("Remove Component"))
+						componentRemoved = true;
 
-				ImGui::TreePop();
+					ImGui::EndPopup();
+				}
+
+				if (open)
+				{
+					auto& component = entity.GetComponent<T>();
+
+					drawFunction(component);
+
+					ImGui::TreePop();
+				}
+
+				if (componentRemoved)
+					entity.RemoveComponent<T>();
 			}
 		}
 	private:

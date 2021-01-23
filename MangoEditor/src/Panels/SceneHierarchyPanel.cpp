@@ -32,6 +32,16 @@ namespace Mango {
 		if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
 			m_SelectionContext = {};
 
+
+		// Right-click on blank space
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+				m_Context->CreateEntity("Empty Entity");
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 		
 		ImGui::Begin("Properties");
@@ -39,6 +49,26 @@ namespace Mango {
 		if (m_SelectionContext)
 		{
 			DrawComponents(m_SelectionContext);
+
+			if (ImGui::Button("Add Component"))
+				ImGui::OpenPopup("AddComponent");
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_SelectionContext.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_SelectionContext.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
 		}
 
 		ImGui::End();
@@ -55,10 +85,26 @@ namespace Mango {
 			m_SelectionContext = entity;
 		}
 
+		bool entityDeleted = false;
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+				entityDeleted = true;
+
+			ImGui::EndPopup();
+		}
+
 		if (expanded)
 		{
 			ImGui::Text("Children...");
 			ImGui::TreePop();
+		}
+
+		if (entityDeleted)
+		{
+			m_Context->DestroyEntity(entity);
+			if (m_SelectionContext == entity)
+				m_SelectionContext = {};
 		}
 	}
 
@@ -152,7 +198,7 @@ namespace Mango {
 				component.Rotation = glm::radians(rotation);
 
 			DrawVec3Control("Scale", component.Scale, 1.0f);
-		});
+		}, false);
 
 		DrawComponent<CameraComponent>(entity, "Camera", [](auto& component) {
 			auto& camera = component.Camera;

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <filesystem>
 
 // Platform dettection using predefined macros
 #ifdef _WIN32
@@ -54,12 +55,29 @@
 	#define __MGO_DEBUGBREAK()
 #endif
 
+#define __MGO_EXPAND_MACRO(x) x
+#define __MGO_STRINGIFY_MACRO(x) #x
+
 #ifdef MANGO_ENABLE_ASSERTS
-	#define MGO_ASSERT(X, ...) { if (!(X)) { MGO_ERROR("Assertion failed: {0}", __VA_ARGS__); __MGO_DEBUGBREAK(); } }
-	#define MGO_CORE_ASSERT(X, ...) { if (!(X)) { MGO_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); __MGO_DEBUGBREAK(); } }
+
+	// Alteratively we could use the same "default" message for both "WITH_MSG" and "NO_MSG" and
+	// provide support for custom formatting by concatenating the formatting string instead of having the format inside the default message
+	#define __MGO_ASSERT_IMPL(type, check, msg, ...) { if(!(check)) { MGO##type##ERROR(msg, __VA_ARGS__); __MGO_DEBUGBREAK(); } }
+	#define __MGO_ASSERT_WITH_MSG(type, check, ...) __MGO_ASSERT_IMPL(type, check, "Assertion failed: {0}", __VA_ARGS__)
+	#define __MGO_ASSERT_NO_MSG(type, check) __MGO_ASSERT_IMPL(type, check, "Assertion '{0}' failed at {1}:{2}", __MGO_STRINGIFY_MACRO(check), std::filesystem::path(__FILE__).filename().string(), __LINE__)
+
+	#define __MGO_ASSERT_GET_MACRO_NAME(arg1, arg2, macro, ...) macro
+	#define __MGO_ASSERT_GET_MACRO(...) __MGO_EXPAND_MACRO( __MGO_ASSERT_GET_MACRO_NAME(__VA_ARGS__, __MGO_ASSERT_WITH_MSG, __MGO_ASSERT_NO_MSG) )
+
+	// Currently accepts at least the condition and one additional parameter (the message) being optional
+	#define MGO_ASSERT(...) __MGO_EXPAND_MACRO( __MGO_ASSERT_GET_MACRO(__VA_ARGS__)(_, __VA_ARGS__) )
+	#define MGO_CORE_ASSERT(...) __MGO_EXPAND_MACRO( __MGO_ASSERT_GET_MACRO(__VA_ARGS__)(_CORE_, __VA_ARGS__) )
+
+	//#define MGO_ASSERT(X, ...) { if (!(X)) { MGO_ERROR("Assertion failed: {0}", __VA_ARGS__); __MGO_DEBUGBREAK(); } }
+	//#define MGO_CORE_ASSERT(X, ...) { if (!(X)) { MGO_CORE_ERROR("Assertion failed: {0}", __VA_ARGS__); __MGO_DEBUGBREAK(); } }
 #else
-	#define MGO_ASSERT(X, ...) 
-	#define MGO_CORE_ASSERT(X, ...) 
+	#define MGO_ASSERT(...) 
+	#define MGO_CORE_ASSERT(...) 
 #endif
 
 #define BIT(x) (1 << (x))

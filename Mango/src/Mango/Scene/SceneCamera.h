@@ -24,8 +24,8 @@ namespace Mango {
 		float GetOrthographicFarClip() const { return m_OrthographicFar; }
 		void  SetOrthographicFarClip(float farClip) { m_OrthographicFar = farClip; RecalculateProjection(); }
 
-		float GetPersectiveVerticalFOV() const { return m_PerspectiveFOV; }
-		void  SetPerspectiveSize(float fov) { m_PerspectiveFOV = fov; RecalculateProjection(); }
+		float GetPerspectiveVerticalFOV() const { return m_PerspectiveFOV; }
+		void  SetPerspectiveVerticalFOV(float fov) { m_PerspectiveFOV = fov; RecalculateProjection(); }
 		float GetPerspectiveNearClip() const { return  m_PerspectiveNear; }
 		void  SetPerspectiveNearClip(float nearClip) { m_PerspectiveNear = nearClip; RecalculateProjection(); }
 		float GetPerspectiveFarClip() const { return m_PerspectiveFar; }

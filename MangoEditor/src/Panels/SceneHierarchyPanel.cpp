@@ -288,9 +288,9 @@ namespace Mango {
 
 			if (component.Camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 			{
-				float fov = glm::degrees(camera.GetPersectiveVerticalFOV());
+				float fov = glm::degrees(camera.GetPerspectiveVerticalFOV());
 				if (ImGui::DragFloat("Vertical FOV", &fov))
-					camera.SetPerspectiveSize(glm::radians(fov));
+					camera.SetPerspectiveVerticalFOV(glm::radians(fov));
 
 				float orthoNear = camera.GetPerspectiveNearClip();
 				if (ImGui::DragFloat("Near", &orthoNear))

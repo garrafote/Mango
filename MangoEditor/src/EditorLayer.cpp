@@ -1,6 +1,8 @@
 #include "EditorLayer.h"
 
+#include "Mango/Scene/SceneSerializer.h"
 #include "Mango/Debug/Instrumentor.h"
+
 #include <iostream>
 
 #include <imgui/imgui.h>
@@ -29,6 +31,7 @@ namespace Mango {
 
         m_ActiveScene = CreateRef<Scene>();
 
+    #if 0
         // Entity
         auto redSquare = m_ActiveScene->CreateEntity("Green Square");
         redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
@@ -64,6 +67,7 @@ namespace Mango {
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+    #endif
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
@@ -180,7 +184,19 @@ namespace Mango {
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Quit", "")) { Application::Get().Close(); }
+                if (ImGui::MenuItem("Serialize"))
+                { 
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Serialize("assets/scenes/Example.mango");
+                }
+                
+                if (ImGui::MenuItem("Deserialize"))
+                { 
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Deserialize("assets/scenes/Example.mango");
+                }
+
+                if (ImGui::MenuItem("Exit")) { Application::Get().Close(); }
                 ImGui::EndMenu();
             }
 

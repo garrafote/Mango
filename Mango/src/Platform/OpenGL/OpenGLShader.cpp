@@ -131,7 +131,7 @@ namespace Mango {
 
 		// Increase if needed
 		const int maxShaders = 2;
-		MGO_CORE_ASSERT(shaderSources.size() <= maxShaders, "Shader programs cannot have more than {0} shaders", maxShaders);
+		//MGO_CORE_ASSERT(shaderSources.size() <= maxShaders, "Shader programs cannot have more than {0} shaders", maxShaders);
 		std::array<GLuint, maxShaders> glShaderIDs;
 		int glShaderIDIndex = 0;
 

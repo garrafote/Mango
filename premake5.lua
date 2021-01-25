@@ -21,6 +21,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Mango/vendor/GLFW/include"
 IncludeDir["Glad"] = "Mango/vendor/Glad/include"
 IncludeDir["ImGui"] = "Mango/vendor/imgui"
+IncludeDir["yaml_cpp"] = "Mango/vendor/yaml-cpp/include"
 IncludeDir["glm"] = "Mango/vendor/glm"
 IncludeDir["stb_image"] = "Mango/vendor/stb_image"
 IncludeDir["entt"] = "Mango/vendor/entt/include"
@@ -29,6 +30,7 @@ group "Dependencies"
 	include "Mango/vendor/GLFW"
 	include "Mango/vendor/Glad"
 	include "Mango/vendor/imgui"
+	include "Mango/vendor/yaml-cpp"
 
 group ""
 
@@ -68,6 +70,7 @@ project "Mango"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}"
@@ -78,6 +81,7 @@ project "Mango"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib"
 	}
 
@@ -124,7 +128,8 @@ project "Sandbox"
 		"Mango/vendor/spdlog/include",
 		"Mango/vendor",
 		"Mango/src",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -172,6 +177,7 @@ project "MangoEditor"
 		"Mango/vendor",
 		"Mango/src",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.entt}"
 	}
 

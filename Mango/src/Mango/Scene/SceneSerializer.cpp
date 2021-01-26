@@ -162,8 +162,7 @@ namespace Mango {
 		out << YAML::EndSeq;
 		out << YAML::EndMap;
 
-
-		std::filesystem::create_directories(filepath.substr(0, filepath.find_last_of('/')));
+		//std::filesystem::create_directories(filepath.substr(0, filepath.find('\\')));
 		std::ofstream fout(filepath);
 		fout << out.c_str();
 	}

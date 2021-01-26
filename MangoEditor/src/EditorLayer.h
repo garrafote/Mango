@@ -19,6 +19,13 @@ namespace Mango {
 		virtual void OnEvent(Mango::Event& event) override;
 
 	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+
+	private:
 
 		Mango::OrthographicCameraController m_CameraController;
 

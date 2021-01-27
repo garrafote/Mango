@@ -42,6 +42,8 @@ namespace Mango {
 
 		glm::vec4 m_SquareColor = { 0.8f, 0.2f, 0.3f, 0.8f };
 
+		int m_GizmoType = -1;
+
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};

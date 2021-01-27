@@ -6,6 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
+
 namespace Mango {
 
 	struct TagComponent
@@ -31,13 +35,9 @@ namespace Mango {
 
 		glm::mat4 GetTransform() const
 		{
-			glm::mat4 transform(1.0f);
-			transform = glm::translate(transform, Translation);
-			transform = glm::rotate(transform, Rotation.x, {1, 0, 0});
-			transform = glm::rotate(transform, Rotation.y, {0, 1, 0});
-			transform = glm::rotate(transform, Rotation.z, {0, 0, 1});
-			transform = glm::scale(transform, Scale);
-			return transform;
+			return glm::translate(Translation)
+				* glm::toMat4(glm::quat(Rotation))
+				* glm::scale(Scale);
 		}
 	};
 

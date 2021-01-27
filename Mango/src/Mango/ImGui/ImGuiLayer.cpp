@@ -5,6 +5,8 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
+#include <ImGuizmo.h>
+
 #include "Mango/Core/Application.h"
 
 // TEMPORARY
@@ -75,9 +77,9 @@ namespace Mango {
 	{
 		if (m_BlockEvents)
 		{
-			//ImGuiIO& io = ImGui::GetIO();
-			//e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-			//e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+			ImGuiIO& io = ImGui::GetIO();
+			e.Handled |= e.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			e.Handled |= e.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
 		}
 	}
 
@@ -88,6 +90,7 @@ namespace Mango {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::End()

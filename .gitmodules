@@ -17,3 +17,6 @@
 [submodule "Mango/vendor/yaml-cpp"]
 	path = Mango/vendor/yaml-cpp
 	url = https://github.com/garrafote/yaml-cpp.git
+[submodule "Mango/vendor/ImGuizmo"]
+	path = Mango/vendor/ImGuizmo
+	url = https://github.com/garrafote/ImGuizmo.git

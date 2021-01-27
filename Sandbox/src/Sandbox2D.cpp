@@ -1,5 +1,7 @@
 #include "Sandbox2D.h"
 
+#include "Mango/Debug/Instrumentor.h"
+
 #include <imgui/imgui.h>
 
 #include <glm/gtc/matrix_transform.hpp>

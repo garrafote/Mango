@@ -1,3 +1,5 @@
+include "./vendor/premake/premake_customization/solution_items.lua"
+
 workspace "Mango"
 	architecture "x86_64"
 	startproject "MangoEditor"
@@ -9,6 +11,11 @@ workspace "Mango"
 		"Dist"
 	}
 
+	solution_items
+	{
+		".editorconfig"
+	}
+
 	flags
 	{
 		"MultiProcessorCompile"
@@ -18,15 +25,17 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (Solution directory)
 IncludeDir = {}
-IncludeDir["GLFW"] = "Mango/vendor/GLFW/include"
-IncludeDir["Glad"] = "Mango/vendor/Glad/include"
-IncludeDir["ImGui"] = "Mango/vendor/imgui"
-IncludeDir["yaml_cpp"] = "Mango/vendor/yaml-cpp/include"
-IncludeDir["glm"] = "Mango/vendor/glm"
-IncludeDir["stb_image"] = "Mango/vendor/stb_image"
-IncludeDir["entt"] = "Mango/vendor/entt/include"
+IncludeDir["GLFW"]       = "%{wks.location}/Mango/vendor/GLFW/include"
+IncludeDir["Glad"]       = "%{wks.location}/Mango/vendor/Glad/include"
+IncludeDir["ImGui"]      = "%{wks.location}/Mango/vendor/imgui"
+IncludeDir["yaml_cpp"]   = "%{wks.location}/Mango/vendor/yaml-cpp/include"
+IncludeDir["glm"]        = "%{wks.location}/Mango/vendor/glm"
+IncludeDir["stb_image"]  = "%{wks.location}/Mango/vendor/stb_image"
+IncludeDir["entt"]       = "%{wks.location}/Mango/vendor/entt/include"
+IncludeDir["ImGuizmo"]   = "%{wks.location}/Mango/vendor/ImGuizmo"
 
 group "Dependencies"
+	include "vendor/premake"
 	include "Mango/vendor/GLFW"
 	include "Mango/vendor/Glad"
 	include "Mango/vendor/imgui"
@@ -34,172 +43,7 @@ group "Dependencies"
 
 group ""
 
-project "Mango"
-	location "Mango"
-	kind "StaticLib"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
+include "Mango"
+include "MangoEditor"
+include "Sandbox"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("intermediate/" .. outputdir .. "/%{prj.name}")
-
-	pchheader "MangoPCH.h"
-	pchsource "Mango/src/MangoPCH.cpp"
-
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/vendor/stb_image/**.h",
-		"%{prj.name}/vendor/stb_image/**.cpp",
-		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
-	}
-
-	defines
-	{
-		"_CRT_SECURE_NO_WARNINGS",
-		"GLFW_INCLUDE_NONE"
-	}
-
-	includedirs
-	{
-		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}"
-	}
-
-	links
-	{
-		"GLFW",
-		"Glad",
-		"ImGui",
-		"yaml-cpp",
-		"opengl32.lib"
-	}
-
-	filter "system:windows"
-		systemversion "latest"
-
-		defines
-		{
-		}
-
-	filter "configurations:Debug"
-		defines "MANGO_DEBUG"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "MANGO_RELEASE"
-		runtime "Release"
-		optimize "on"
-	
-	filter "configurations:Dist"
-		defines "MANGO_DIST"
-		runtime "Release"
-		optimize "on"
-
-project "Sandbox"
-	location "Sandbox"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
-
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("intermediate/" .. outputdir .. "/%{prj.name}")
-
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
-	}
-
-	includedirs
-	{
-		"Mango/vendor/spdlog/include",
-		"Mango/vendor",
-		"Mango/src",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
-	}
-
-	links
-	{
-		"Mango"
-	}
-
-	filter "system:windows"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		defines "MANGO_DEBUG"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "MANGO_RELEASE"
-		runtime "Release"
-		optimize "on"
-	
-	filter "configurations:Dist"
-		defines "MANGO_DIST"
-		runtime "Release"
-		optimize "on"
-
-project "MangoEditor"
-	location "MangoEditor"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
-
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("intermediate/" .. outputdir .. "/%{prj.name}")
-
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
-	}
-
-	includedirs
-	{
-		"Mango/vendor/spdlog/include",
-		"Mango/vendor",
-		"Mango/src",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.entt}"
-	}
-
-	links
-	{
-		"Mango"
-	}
-
-	filter "system:windows"
-		systemversion "latest"
-
-	filter "configurations:Debug"
-		defines "MANGO_DEBUG"
-		runtime "Debug"
-		symbols "on"
-
-	filter "configurations:Release"
-		defines "MANGO_RELEASE"
-		runtime "Release"
-		optimize "on"
-	
-	filter "configurations:Dist"
-		defines "MANGO_DIST"
-		runtime "Release"
-		optimize "on"

@@ -2,6 +2,7 @@
 
 #include "Mango/Events/Event.h"
 #include "Mango/Core/MouseButtons.h"
+#include <sstream>
 
 namespace Mango {
 

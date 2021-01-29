@@ -115,8 +115,25 @@ namespace Mango {
 	{
 		MGO_PROFILE_FUNCTION();
 
+		glm::mat4 proj = camera.GetProjection();
+		glm::mat4 view = glm::inverse(transform);
+
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 
+		s_Data.UnlitShader->Bind();
+		s_Data.UnlitShader->SetMat4("u_ViewProjection", viewProj);
+
+		Reset();
+	}
+
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		MGO_PROFILE_FUNCTION();
+		
+		glm::mat4 proj = camera.GetProjection();
+		glm::mat4 view = camera.GetViewMatrix();
+
+		glm::mat4 viewProj = camera.GetViewProjection();
 		s_Data.UnlitShader->Bind();
 		s_Data.UnlitShader->SetMat4("u_ViewProjection", viewProj);
 

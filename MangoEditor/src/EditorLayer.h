@@ -3,6 +3,8 @@
 #include "Mango.h"
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "Mango/Renderer/EditorCamera.h"
+
 namespace Mango {
 	
 	class EditorLayer : public Mango::Layer
@@ -34,6 +36,8 @@ namespace Mango {
 		Ref<Scene> m_ActiveScene;
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
+
+		EditorCamera m_EditorCamera;
 
 		Mango::Ref<Mango::Texture2D> m_CheckerboardTexture;
 

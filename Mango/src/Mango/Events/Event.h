@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <ostream>
 
 #include "Mango/Core/Base.h"
 

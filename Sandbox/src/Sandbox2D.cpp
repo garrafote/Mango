@@ -26,12 +26,12 @@ static const char* s_MapTiles =
 "WWWWWWWWWWWWWWWWWWWWWWWW"
 ;
 
-EditorLayer::EditorLayer()
+SandboxLayer::SandboxLayer()
 	: Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f, true), m_ParticleSystem(10000)
 {
 }
 
-void EditorLayer::OnAttach()
+void SandboxLayer::OnAttach()
 {
 	MGO_PROFILE_FUNCTION();
 
@@ -64,13 +64,13 @@ void EditorLayer::OnAttach()
 	m_CameraController.SetZoomLevel(5);
 }
 
-void EditorLayer::OnDettach()
+void SandboxLayer::OnDettach()
 {
 	MGO_PROFILE_FUNCTION();
 
 }
 
-void EditorLayer::OnUpdate(Mango::Timestep ts)
+void SandboxLayer::OnUpdate(Mango::Timestep ts)
 {
 	MGO_PROFILE_FUNCTION();
 
@@ -163,7 +163,7 @@ void EditorLayer::OnUpdate(Mango::Timestep ts)
 	}
 }
 
-void EditorLayer::OnImGuiRender()
+void SandboxLayer::OnImGuiRender()
 {
 	MGO_PROFILE_FUNCTION();
 
@@ -183,7 +183,7 @@ void EditorLayer::OnImGuiRender()
 
 }
 
-void EditorLayer::OnEvent(Mango::Event& e)
+void SandboxLayer::OnEvent(Mango::Event& e)
 {
 	m_CameraController.OnEvent(e);
 }

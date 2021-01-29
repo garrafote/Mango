@@ -10,7 +10,7 @@ public:
 	Sandbox()
 	{
 		//PushLayer(new ExampleLayer());
-		PushLayer(new EditorLayer());
+		PushLayer(new SandboxLayer());
 	}
 
 	~Sandbox()

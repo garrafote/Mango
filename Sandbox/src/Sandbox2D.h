@@ -3,11 +3,11 @@
 
 #include "ParticleSystem.h"
 
-class EditorLayer : public Mango::Layer
+class SandboxLayer : public Mango::Layer
 {
 public:
-	EditorLayer();
-	virtual ~EditorLayer() = default;
+	SandboxLayer();
+	virtual ~SandboxLayer() = default;
 
 	virtual void OnAttach() override;
 	virtual void OnDettach() override;

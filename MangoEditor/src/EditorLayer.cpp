@@ -29,6 +29,7 @@ namespace Mango {
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
 		FramebufferSpecification fbspec;
+		fbspec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
 		fbspec.Width = 1280;
 		fbspec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbspec);

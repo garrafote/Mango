@@ -17,6 +17,7 @@ namespace Mango {
 		glm::vec2 TexCoord;
 		int32_t TexIndex;
 		glm::vec4 Tiling;
+		int32_t EntityId;
 	};
 
 	struct Renderer2DData
@@ -56,6 +57,7 @@ namespace Mango {
 			{ ShaderDataType::Float2, "a_TexCoord" },
 			{ ShaderDataType::Int, "a_TexIndex" },
 			{ ShaderDataType::Float4, "a_Tiling" },
+			{ ShaderDataType::Int, "a_EntityId" },
 		});
 		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
@@ -260,12 +262,12 @@ namespace Mango {
 		DrawQuad(transform, subtexture->GetTexture(), glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), tintColor, subtexture->GetTexCoords());
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int32_t entityId)
 	{
-		DrawQuad(transform, s_Data.WhiteTexture, glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), color);
+		DrawQuad(transform, s_Data.WhiteTexture, glm::vec4(1.0f, 1.0f, 0.0f, 0.0f), color, nullptr, entityId);
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffsett, const glm::vec4& tintColor, const glm::vec2* quadTexCoords)
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tilingAndOffsett, const glm::vec4& tintColor, const glm::vec2* quadTexCoords, int32_t entityId)
 	{
 		MGO_PROFILE_FUNCTION();
 
@@ -301,6 +303,7 @@ namespace Mango {
 			s_Data.QuadVertexBufferPtr->TexCoord = texCoords[index];
 			s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.QuadVertexBufferPtr->Tiling = tilingAndOffsett;
+			s_Data.QuadVertexBufferPtr->EntityId = entityId;
 			s_Data.QuadVertexBufferPtr++;
 		}
 

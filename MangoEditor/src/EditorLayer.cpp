@@ -29,7 +29,7 @@ namespace Mango {
 		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
 
 		FramebufferSpecification fbspec;
-		fbspec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+		fbspec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 		fbspec.Width = 1280;
 		fbspec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbspec);
@@ -113,6 +113,21 @@ namespace Mango {
 
 		// Update Scene
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+
+		auto [mx, my] = ImGui::GetMousePos();
+
+		glm::vec2 mousePosition = glm::vec2(mx, my) - m_ViewportBounds[0];
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		mousePosition.y = viewportSize.y - mousePosition.y;
+
+		if (mousePosition.x >= 0 && mousePosition.y >= 0 && 
+			mousePosition.x < viewportSize.x && mousePosition.y < viewportSize.y)
+		{
+			int data = m_Framebuffer->ReadPixel(1, (int)mousePosition.x, (int)mousePosition.y);
+			MGO_CORE_WARN("Mouse = {0} {1}", mousePosition.x, mousePosition.y);
+			MGO_CORE_WARN("Pixel Data = {0} ", data);
+		}
+
 
 		m_Framebuffer->Unbind();
 	}
@@ -229,6 +244,10 @@ namespace Mango {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
+
+		auto viewportOffset = ImGui::GetCursorPos(); // current drawing position (includes tab bar)
+
+
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
 		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportFocused && !m_ViewportHovered);
@@ -237,6 +256,15 @@ namespace Mango {
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
 		ImGui::Image((void*)textureID, viewportPanelSize, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		auto windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		m_ViewportBounds[0] = { minBound.x, minBound.y };
+		m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 
 		// Gizmos
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();

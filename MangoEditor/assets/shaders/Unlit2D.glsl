@@ -31,7 +31,7 @@ void main()
 #version 330 core
 
 layout(location = 0) out vec4 color;
-layout(location = 1) out vec4 color2;
+layout(location = 1) out int id;
 
 in vec4 v_Color;
 in vec2 v_TexCoord;
@@ -83,5 +83,5 @@ void main()
 {
 	//color = texture_32(u_Textures, v_TexIndex, v_TexCoord * v_Tiling.xy + v_Tiling.zw) * v_Color;
 	color = texture(u_Textures[v_TexIndex], v_TexCoord * v_Tiling.xy + v_Tiling.zw) * v_Color;
-	color2 = vec4(0.9, 0.2, 0.3, 1.0);
+	id = 50;
 }

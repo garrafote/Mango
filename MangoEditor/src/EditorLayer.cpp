@@ -111,6 +111,9 @@ namespace Mango {
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 		RenderCommand::Clear();
 
+		// reset entity ID on buffer attachment to -1
+		m_Framebuffer->ClearAttachment(1, -1);
+
 		// Update Scene
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
@@ -120,10 +123,22 @@ namespace Mango {
 		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
 		mousePosition.y = viewportSize.y - mousePosition.y;
 
-		if (mousePosition.x >= 0 && mousePosition.y >= 0 && 
-			mousePosition.x < viewportSize.x && mousePosition.y < viewportSize.y)
+		bool isMouseClicked = ImGui::IsMouseClicked(0);
+		bool control = Input::IsKeyPressed(KeyCode::LeftControl) || Input::IsKeyPressed(KeyCode::RightControl);
+		bool shift = Input::IsKeyPressed(KeyCode::LeftShift) || Input::IsKeyPressed(KeyCode::RightShift);
+		bool alt = Input::IsKeyPressed(KeyCode::LeftAlt) || Input::IsKeyPressed(KeyCode::RightAlt);
+		bool gizmoHovered = ImGuizmo::IsOver();
+		bool inViewportBounds = mousePosition.x >= 0 && mousePosition.y >= 0 && mousePosition.x < viewportSize.x&& mousePosition.y < viewportSize.y;
+
+		if (inViewportBounds && isMouseClicked && !(control || shift || alt || gizmoHovered))
 		{
 			int data = m_Framebuffer->ReadPixel(1, (int)mousePosition.x, (int)mousePosition.y);
+			Entity entity;
+			if (data >= 0)
+				entity = { (entt::entity)data, m_ActiveScene.get() };
+			
+			m_SceneHierarchyPanel.SetSelectedEntity(entity);
+
 			MGO_CORE_WARN("Mouse = {0} {1}", mousePosition.x, mousePosition.y);
 			MGO_CORE_WARN("Pixel Data = {0} ", data);
 		}

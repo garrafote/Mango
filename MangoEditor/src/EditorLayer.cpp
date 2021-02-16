@@ -138,9 +138,6 @@ namespace Mango {
 				entity = { (entt::entity)data, m_ActiveScene.get() };
 			
 			m_SceneHierarchyPanel.SetSelectedEntity(entity);
-
-			MGO_CORE_WARN("Mouse = {0} {1}", mousePosition.x, mousePosition.y);
-			MGO_CORE_WARN("Pixel Data = {0} ", data);
 		}
 
 
